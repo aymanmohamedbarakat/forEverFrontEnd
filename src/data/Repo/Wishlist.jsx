@@ -14,8 +14,8 @@ export const WishlistRepo = {
     return addToUserWishlist(userId, productId);
   },
 
-  removeFromWishlist: async (wishlistItemId) => {
-    return removeFromUserWishlist(wishlistItemId);
+  removeFromWishlist: async (wishlistItemDocumentId) => {
+    return removeFromUserWishlist(wishlistItemDocumentId);
   },
 
   getWishlistItem: async (wishlistItemId) => {

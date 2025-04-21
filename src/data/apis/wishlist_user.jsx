@@ -86,7 +86,6 @@
 // };
 /////////////////////////////////////////////////////
 
-
 // import axios from "axios";
 // import { domain } from "../../store";
 
@@ -175,9 +174,6 @@
 // };
 //////////////////////////////////////////////////////////
 
-
-
-
 // import axios from "axios";
 // import { domain } from "../../store";
 
@@ -205,7 +201,7 @@
 // export const addToUserWishlist = async (userId, productId) => {
 //   try {
 //     const token = localStorage.getItem("token");
-    
+
 //     const res = await axios.post(
 //       `${domain}/api/wishlists`,
 //       {
@@ -231,13 +227,13 @@
 // export const removeFromUserWishlist = async (wishlistItemId) => {
 //   try {
 //     const token = localStorage.getItem("token");
-    
+
 //     await axios.delete(`${domain}/api/wishlists/${wishlistItemId}`, {
 //       headers: {
 //         Authorization: `Bearer ${token}`,
 //       },
 //     });
-    
+
 //     return true;
 //   } catch (err) {
 //     console.error("Error removing from wishlist:", err);
@@ -248,13 +244,13 @@
 // export const getWishlistItem = async (wishlistItemId) => {
 //   try {
 //     const token = localStorage.getItem("token");
-    
+
 //     const res = await axios.get(`${domain}/api/wishlists/${wishlistItemId}?populate=*`, {
 //       headers: {
 //         Authorization: `Bearer ${token}`,
 //       },
 //     });
-    
+
 //     return res.data;
 //   } catch (err) {
 //     console.error("Error getting wishlist item:", err);
@@ -262,12 +258,7 @@
 //   }
 // };
 
-
-
-
-
 //////////////////////////////////////////
-
 
 import axios from "axios";
 import { domain } from "../../store";
@@ -284,14 +275,14 @@ export const userWishlist = async (userId) => {
         // Deep populate all relations including product, category, subcategory, image
         populate: {
           product: {
-            populate: "*"
+            populate: "*",
           },
-          user: true
+          user: true,
         },
-        'filters[user][id][$eq]': userId
-      }
+        "filters[user][id][$eq]": userId,
+      },
     });
-    
+
     console.log("Wishlist data:", response.data.data);
     return response.data.data;
   } catch (error) {
@@ -303,14 +294,14 @@ export const userWishlist = async (userId) => {
 export const addToUserWishlist = async (userId, productId) => {
   try {
     const token = localStorage.getItem("token");
-    
+
     const res = await axios.post(
       `${domain}/api/wishlists`,
       {
         data: {
           user: userId,
-          product: productId
-        }
+          product: productId,
+        },
       },
       {
         headers: {
@@ -318,7 +309,7 @@ export const addToUserWishlist = async (userId, productId) => {
         },
       }
     );
-    
+
     return res.data;
   } catch (err) {
     console.error("Error adding to wishlist:", err);
@@ -326,17 +317,19 @@ export const addToUserWishlist = async (userId, productId) => {
   }
 };
 
-export const removeFromUserWishlist = async (wishlistItemId) => {
+export const removeFromUserWishlist = async (wishlistItemDocumentId) => {
   try {
     const token = localStorage.getItem("token");
-    
-    const response = await axios.delete(`${domain}/api/wishlists/${wishlistItemId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    
-    // Confirm successful deletion
+
+    const response = await axios.delete(
+      `${domain}/api/wishlists/${wishlistItemDocumentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
     console.log("Removal response:", response);
     return true;
   } catch (err) {
@@ -344,11 +337,10 @@ export const removeFromUserWishlist = async (wishlistItemId) => {
     throw err;
   }
 };
-
 export const getWishlistItem = async (wishlistItemId) => {
   try {
     const token = localStorage.getItem("token");
-    
+
     const res = await axios.get(`${domain}/api/wishlists/${wishlistItemId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -356,12 +348,12 @@ export const getWishlistItem = async (wishlistItemId) => {
       params: {
         populate: {
           product: {
-            populate: "*"
-          }
-        }
-      }
+            populate: "*",
+          },
+        },
+      },
     });
-    
+
     return res.data;
   } catch (err) {
     console.error("Error getting wishlist item:", err);
