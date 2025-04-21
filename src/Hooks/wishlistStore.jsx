@@ -192,14 +192,14 @@
 //     try {
 //       set({ loading: true });
 //       const response = await WishlistRepo.getAllWishlists(userId);
-      
+
 //       // Handle the Strapi response format
 //       if (response?.data) {
 //         // Store the wishlist items directly as they come from the API
 //         set({ wishlist: response.data, loading: false });
 //         return response.data;
 //       }
-      
+
 //       set({ loading: false });
 //       return [];
 //     } catch (error) {
@@ -219,13 +219,13 @@
 //       }
 
 //       const response = await WishlistRepo.addToWishlist(userId, productId);
-      
+
 //       if (response) {
 //         // Refresh wishlist data after adding item
 //         await get().getWishlists(userId);
 //         return true;
 //       }
-      
+
 //       return false;
 //     } catch (error) {
 //       console.error("Failed to add item to wishlist:", error);
@@ -236,14 +236,14 @@
 //   removeFromWishlist: async (wishlistItemId) => {
 //     try {
 //       const success = await WishlistRepo.removeFromWishlist(wishlistItemId);
-      
+
 //       if (success) {
 //         set((state) => ({
 //           wishlist: state.wishlist.filter((item) => item.id !== wishlistItemId),
 //         }));
 //         return true;
 //       }
-      
+
 //       return false;
 //     } catch (error) {
 //       console.error("Failed to remove item from wishlist:", error);
@@ -269,8 +269,6 @@
 
 /////////////////////////////////
 
-
-
 import { create } from "zustand";
 import { WishlistRepo } from "../data/Repo/Wishlist";
 import { toast } from "react-toastify";
@@ -283,25 +281,25 @@ export const userWishlistStore = create((set, get) => ({
     try {
       set({ loading: true });
       const response = await WishlistRepo.getAllWishlists(userId);
-      
+
       if (response) {
         // Process data to ensure proper structure
-        const formattedWishlist = response.map(item => {
+        const formattedWishlist = response.map((item) => {
           const formattedProduct = item.product && {
             ...item.product,
-            documentId: item.product.documentId || item.product.id
+            documentId: item.product.documentId || item.product.id,
           };
-          
+
           return {
             ...item,
-            product: formattedProduct
+            product: formattedProduct,
           };
         });
-        
+
         set({ wishlist: formattedWishlist, loading: false });
         return formattedWishlist;
       }
-      
+
       set({ loading: false });
       return [];
     } catch (error) {
@@ -316,19 +314,23 @@ export const userWishlistStore = create((set, get) => ({
     try {
       // Check if item is already in wishlist
       if (get().isInWishlist(productId)) {
-        toast.info("Item already in wishlist");
+        toast.info("Item already in wishlist", {
+          autoClose: 1200,
+        });
         return false;
       }
 
       const response = await WishlistRepo.addToWishlist(userId, productId);
-      
+
       if (response) {
         // Refresh wishlist data after adding item
         await get().getWishlists(userId);
-        toast.success("Added to wishlist");
+        toast.success("Added to wishlist", {
+          autoClose: 1200,
+        });
         return true;
       }
-      
+
       return false;
     } catch (error) {
       console.error("Failed to add item to wishlist:", error);
@@ -340,7 +342,7 @@ export const userWishlistStore = create((set, get) => ({
   // removeFromWishlist: async (wishlistItemId) => {
   //   try {
   //     const success = await WishlistRepo.removeFromWishlist(wishlistItemId);
-      
+
   //     if (success) {
   //       set((state) => ({
   //         wishlist: state.wishlist.filter((item) => item.id !== wishlistItemId),
@@ -348,7 +350,7 @@ export const userWishlistStore = create((set, get) => ({
   //       toast.success("Removed from wishlist");
   //       return true;
   //     }
-      
+
   //     toast.error("Could not remove item");
   //     return false;
   //   } catch (error) {
@@ -360,15 +362,21 @@ export const userWishlistStore = create((set, get) => ({
 
   removeFromWishlist: async (wishlistItemDocumentId) => {
     try {
-      const success = await WishlistRepo.removeFromWishlist(wishlistItemDocumentId);
+      const success = await WishlistRepo.removeFromWishlist(
+        wishlistItemDocumentId
+      );
       if (success) {
         set((state) => ({
-          wishlist: state.wishlist.filter((item) => item.documentId !== wishlistItemDocumentId),
+          wishlist: state.wishlist.filter(
+            (item) => item.documentId !== wishlistItemDocumentId
+          ),
         }));
-        toast.success("Removed from wishlist");
+        toast.success("Removed from wishlist", {
+          autoClose: 1200,
+        });
         return true;
       }
-      
+
       toast.error("Could not remove item");
       return false;
     } catch (error) {
@@ -380,17 +388,19 @@ export const userWishlistStore = create((set, get) => ({
 
   isInWishlist: (productId) => {
     return get().wishlist.some(
-      (item) => item.product && 
-      (item.product.documentId === productId || item.product.id === productId)
+      (item) =>
+        item.product &&
+        (item.product.documentId === productId || item.product.id === productId)
     );
   },
 
   getWishlistItemId: (productId) => {
     const item = get().wishlist.find(
-      (item) => item.product && 
-      (item.product.documentId === productId || item.product.id === productId)
+      (item) =>
+        item.product &&
+        (item.product.documentId === productId || item.product.id === productId)
     );
-    return item ? item.documentId  : null;
+    return item ? item.documentId : null;
   },
 
   clearWishlists: () => set({ wishlist: [] }),

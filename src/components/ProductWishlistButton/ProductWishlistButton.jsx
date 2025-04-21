@@ -114,7 +114,6 @@
 // }
 ///////////////////////////////////////////////////////
 
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -124,13 +123,9 @@ import { FaHeart } from "react-icons/fa";
 
 export default function ProductWishlistButton({ productId }) {
   const { isAuthenticated, currentUser } = useAuthStore();
-  const { 
-    isInWishlist, 
-    addToWishlist, 
-    removeFromWishlist, 
-    getWishlistItemId 
-  } = userWishlistStore();
-  
+  const { isInWishlist, addToWishlist, removeFromWishlist, getWishlistItemId } =
+    userWishlistStore();
+
   const [inWishlist, setInWishlist] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -157,14 +152,12 @@ export default function ProductWishlistButton({ productId }) {
         if (wishlistItemId) {
           await removeFromWishlist(wishlistItemId);
           setInWishlist(false);
-          toast.success("Removed from wishlist");
         }
       } else {
         // Add to wishlist
         const result = await addToWishlist(currentUser.id, productId);
         if (result) {
           setInWishlist(true);
-          toast.success("Added to wishlist");
         }
       }
     } catch (error) {
@@ -186,7 +179,9 @@ export default function ProductWishlistButton({ productId }) {
       } ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
       aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
     >
-      <FaHeart className={`mr-2 ${inWishlist ? "text-red-500" : "text-gray-400"}`} />
+      <FaHeart
+        className={`mr-2 ${inWishlist ? "text-red-500" : "text-gray-400"}`}
+      />
       {inWishlist ? "Remove from wishlist" : "Add to wishlist"}
     </button>
   );
