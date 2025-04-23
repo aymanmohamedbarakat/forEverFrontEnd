@@ -1,8 +1,13 @@
 import { toast } from "react-toastify";
 import { create } from "zustand";
-
+let savedCart = [];
+try {
+  savedCart = JSON.parse(localStorage.getItem("cartItems")) || [];
+} catch (e) {
+  console.error("Failed to parse cartItems:", e);
+}
 export const useCartStore = create((set, get) => ({
-  cartItems: JSON.parse(localStorage.getItem("cartItems")) || [],
+  cartItems: savedCart,
 
   addToCart: (itemId, size) => {
     if (!size) {

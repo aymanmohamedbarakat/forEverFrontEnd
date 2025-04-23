@@ -12,6 +12,7 @@ import RegisterPage from "./pages/RegisterPage";
 import { useAuthStore } from "./Hooks/authStore";
 import AuthGuard from "./Guard/AuthGuard";
 import WishlistPage from "./pages/WishlistPage";
+import OrderPage from "./pages/OrderPage";
 export default function App() {
   const { validateToken } = useAuthStore();
 
@@ -41,7 +42,7 @@ export default function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/place-order" element={<PlaceOrders />} />
-
+          <Route path="/orders" element={<OrderPage />} />
           <Route path="*" element={<h1>Page Not Found</h1>} />
         </Route>
 

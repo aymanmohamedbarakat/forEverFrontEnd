@@ -283,12 +283,27 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../Hooks/authStore";
 import { userWishlistStore } from "../Hooks/wishlistStore";
 import { domain } from "../store";
+import Title from "../components/Title/Title";
+import {
+  ArrowRight,
+  Eye,
+  HeartOff,
+  RefreshCcw,
+  ShoppingBag,
+} from "lucide-react";
+import { FaShoppingCart } from "react-icons/fa";
 
 export default function WishlistPage() {
   const navigate = useNavigate();
   const { currentUser, isAuthenticated } = useAuthStore();
-  const { wishlist, getWishlists, removeFromWishlist, loading } =
-    userWishlistStore();
+  const {
+    wishlist,
+    getWishlists,
+    removeFromWishlist,
+    loading,
+    clearWishlists,
+  } = userWishlistStore();
+
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -317,6 +332,8 @@ export default function WishlistPage() {
     navigate(`/products/${productId}`);
   };
 
+  const isWishlistEmpty = wishlist.length === 0;
+
   if (isLoading || loading) {
     return (
       <div className="container mx-auto py-16 px-4">
@@ -328,124 +345,186 @@ export default function WishlistPage() {
     );
   }
 
-  if (!wishlist || wishlist.length === 0) {
-    return (
-      <div className="container mx-auto py-16 px-4">
-        <h1 className="text-3xl font-bold mb-8">Your Wishlist</h1>
-        <div className="bg-gray-50 rounded-lg p-8 text-center">
-          <p className="text-xl text-gray-600 mb-6">Your wishlist is empty</p>
-          <button
-            onClick={() => navigate("/shopping")}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md transition-colors"
-          >
-            Browse Products
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // if (!wishlist || wishlist.length === 0) {
+  //   return (
+  //     <div className="container mx-auto py-16 px-4">
+  //       <h1 className="text-3xl font-bold mb-8">Your Wishlist</h1>
+  //       <div className="bg-gray-50 rounded-lg p-8 text-center">
+  //         <p className="text-xl text-gray-600 mb-6">Your wishlist is empty</p>
+  //         <button
+  //           onClick={() => navigate("/shopping")}
+  //           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md transition-colors"
+  //         >
+  //           Browse Products
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
-    <div className="container mx-auto py-16 px-4">
-      <h1 className="text-3xl font-bold mb-8">Your Wishlist</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {wishlist.map((item) => (
-          <div
-            key={item.id}
-            className="border rounded-lg overflow-hidden shadow-sm bg-white"
-          >
-            {item.product && (
-              <>
-                {item.product.image && item.product.image.length > 0 && (
-                  <div className="h-48 overflow-hidden">
+    // <div className="container mx-auto py-16 px-4">
+    //   <h1 className="text-3xl font-bold mb-8">Your Wishlist</h1>
+    //   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    //     {wishlist.map((item) => (
+    //       <div
+    //         key={item.id}
+    //         className="border rounded-lg overflow-hidden shadow-sm bg-white"
+    //       >
+    //         {item.product && (
+    //           <>
+    //             {item.product.image && item.product.image.length > 0 && (
+    //               <div className="h-48 overflow-hidden">
+    // <img
+    //   src={`${domain}${item.product.image[0].url}`}
+    //   alt={item.product.name}
+    //   className="w-full h-full object-cover"
+    //   onError={(e) => {
+    //     e.target.src = "/api/placeholder/400/320";
+    //     e.target.alt = "Image not available";
+    //   }}
+    // />
+    //               </div>
+    //             )}
+    //             <div className="p-4">
+    //               <h3 className="text-lg font-medium mb-2">
+    //                 {item.product.name}
+    //               </h3>
+    //               {item.product.description && (
+    //                 <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+    //                   {item.product.description}
+    //                 </p>
+    //               )}
+
+    // <p className="text-gray-700 mb-2 font-semibold">
+    //   ${item.product.price}
+    // </p>
+
+    //               <div className="flex justify-between mt-4">
+    //                 <button
+    //                   className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+    // onClick={() =>
+    //   navigateToProduct(
+    //     item.product.documentId || item.product.id
+    //   )
+    // }
+    //                 >
+    //                   View Product
+    //                 </button>
+    //                 <button
+    //                   className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+    //                   onClick={() => handleRemoveItem(item.documentId)} // id
+    //                 >
+    //                   Remove
+    //                 </button>
+    //               </div>
+    //             </div>
+    //           </>
+    //         )}
+    //         {!item.product && (
+    //           <div className="p-4">
+    //             <p className="text-red-500">Product no longer available</p>
+    //             <button
+    //               className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+    //               onClick={() => handleRemoveItem(item.documentId)}
+    //             >
+    //               Remove
+    //             </button>
+    //           </div>
+    //         )}
+    //       </div>
+    //     ))}
+    //   </div>
+    // </div>
+
+    <>
+      <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <div className="border-t border-gray-300 pt-8">
+          <div className="flex justify-between items-center mb-6">
+            <Title text1={"YOUR"} text2={"WISHLIST"} />
+
+            {!isWishlistEmpty && (
+              <button
+                onClick={clearWishlists}
+                className="flex items-center text-gray-500 hover:text-red-500 transition-colors text-sm"
+              >
+                <RefreshCcw size={16} className="mr-1" />
+                Clear Cart
+              </button>
+            )}
+          </div>
+
+          {isWishlistEmpty ? (
+            <div className="py-16 text-center">
+              <div className="flex justify-center mb-4">
+                <HeartOff size={64} className="text-gray-300" />
+              </div>
+              <p className="text-xl text-gray-600 mb-6">
+                Your WishList is empty
+              </p>
+              <button
+                onClick={() => navigate("/shopping")}
+                className="bg-black text-white text-sm px-8 py-3 hover:bg-gray-800 transition-colors flex items-center mx-auto"
+              >
+                CONTINUE SHOPPING
+                <ArrowRight size={16} className="ml-2" />
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {wishlist.map((item) => (
+                <div
+                  key={item.documentId}
+                  className="border border-gray-200 p-4 flex flex-col"
+                >
+                  <div className="relative group">
                     <img
                       src={`${domain}${item.product.image[0].url}`}
                       alt={item.product.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-75 object-cover"
                       onError={(e) => {
                         e.target.src = "/api/placeholder/400/320";
                         e.target.alt = "Image not available";
                       }}
                     />
+                    <div className="absolute top-2 right-2">
+                      <button
+                        onClick={() => handleRemoveItem(item.documentId)}
+                        className="bg-white p-2 rounded-full shadow-md hover:bg-gray-100"
+                      >
+                        <HeartOff size={16} className="text-red-500" />
+                      </button>
+                    </div>
                   </div>
-                )}
-                <div className="p-4">
-                  <h3 className="text-lg font-medium mb-2">
-                    {item.product.name}
-                  </h3>
-
-                  {/* Category and subcategory badges */}
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {item.product.category && (
-                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                        {item.product.category.name}
-                      </span>
-                    )}
-                    {item.product.sub_category && (
-                      <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
-                        {item.product.sub_category.name}
-                      </span>
-                    )}
-                    {item.product.bestseller &&
-                      item.product.bestseller.featured && (
-                        <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">
-                          Bestseller
-                        </span>
-                      )}
-                  </div>
-
-                  <p className="text-gray-700 mb-2 font-semibold">
-                    ${item.product.price}
-                  </p>
-
-                  {/* Size info if available */}
-                  {item.product.size && (
-                    <p className="text-sm text-gray-500 mb-2">
-                      Size: {item.product.size.name}
+                  <div className="mt-3">
+                    <h3 className="text-lg font-medium cursor-pointer line-clamp-1">
+                      {item.product.name}
+                    </h3>
+                    <p className="text-gray-700 mb-2 font-semibold">
+                      ${item.product.price.toFixed(2)}
                     </p>
-                  )}
-
-                  {item.product.description && (
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      {item.product.description}
-                    </p>
-                  )}
-
-                  <div className="flex justify-between mt-4">
+                    {item.product.description && (
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                        {item.product.description}
+                      </p>
+                    )}
                     <button
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                      className="btn btn-soft w-full"
                       onClick={() =>
                         navigateToProduct(
                           item.product.documentId || item.product.id
                         )
                       }
                     >
-                      View Product
-                    </button>
-                    <button
-                      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                      onClick={() => handleRemoveItem(item.documentId)} // id
-                    >
-                      Remove
+                      <Eye size={16} /> View
                     </button>
                   </div>
                 </div>
-              </>
-            )}
-            {!item.product && (
-              <div className="p-4">
-                <p className="text-red-500">Product no longer available</p>
-                <button
-                  className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                  onClick={() => handleRemoveItem(item.documentId)}
-                >
-                  Remove
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

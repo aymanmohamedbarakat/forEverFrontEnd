@@ -339,26 +339,6 @@ export const userWishlistStore = create((set, get) => ({
     }
   },
 
-  // removeFromWishlist: async (wishlistItemId) => {
-  //   try {
-  //     const success = await WishlistRepo.removeFromWishlist(wishlistItemId);
-
-  //     if (success) {
-  //       set((state) => ({
-  //         wishlist: state.wishlist.filter((item) => item.id !== wishlistItemId),
-  //       }));
-  //       toast.success("Removed from wishlist");
-  //       return true;
-  //     }
-
-  //     toast.error("Could not remove item");
-  //     return false;
-  //   } catch (error) {
-  //     console.error("Failed to remove item from wishlist:", error);
-  //     toast.error("Failed to remove from wishlist");
-  //     return false;
-  //   }
-  // },
 
   removeFromWishlist: async (wishlistItemDocumentId) => {
     try {
