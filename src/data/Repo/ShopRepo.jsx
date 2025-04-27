@@ -1,8 +1,8 @@
 
-import { indexCategories } from "../apis/index_categories";
-import { indexProductDetails } from "../apis/index_productDetails";
-import { indexProductItems } from "../apis/index_productItems";
-import { indexSubCategories } from "../apis/index_subcategories";
+import { indexCategories } from "../apis/Shop_Index/index_categories";
+import { indexProductDetails } from "../apis/Shop_Index/index_productDetails";
+import { indexProductItems } from "../apis/Shop_Index/index_productItems";
+import { indexSubCategories } from "../apis/Shop_Index/index_subcategories";
 
 export const ShopRepo = {
   categories_index: async () => {

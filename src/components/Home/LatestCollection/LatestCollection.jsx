@@ -23,7 +23,7 @@ export default function LatestCollection() {
       <div className="text-center py-8 text-2xl md:text-3xl">
         <Title text1="Latest" text2="Collection" />
         <p className="w-3/4 mx-auto text-xs sm:text-sm md:text-base text-gray-600">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse quod .
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse quod .
         </p>
       </div>
       <Swiper
@@ -43,26 +43,27 @@ export default function LatestCollection() {
           1200: { slidesPerView: 4, spaceBetween: 20 },
         }}
       >
-      {Array.isArray(latestProducts) && latestProducts.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4 sm:px-10">
-          {latestProducts.map((el , index) => (
-            <SwiperSlide key={index}>
-
+        {Array.isArray(latestProducts) && latestProducts.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4 sm:px-10">
+            {latestProducts.map((el, index) => (
+              <SwiperSlide key={index}>
                 <ProductItem
                   key={el.documentId}
                   id={el.documentId}
                   name={el.name}
-                  imgUrl={el.image?.[0]?.url ? domain + el.image[0].url : undefined}
+                  imgUrl={
+                    el.image?.[0]?.url ? domain + el.image[0].url : undefined
+                  }
                   price={el.price}
+                  bestSeller={el.bestSeller}
+                  category={el.category}
+                  sub_category={el.sub_category}
                 />
-            </SwiperSlide>
-          ))}
-        </div>
-      ) : null}
-
+              </SwiperSlide>
+            ))}
+          </div>
+        ) : null}
       </Swiper>
-
     </div>
   );
 }
-

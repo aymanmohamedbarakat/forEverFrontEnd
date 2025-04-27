@@ -1,5 +1,7 @@
+/////////////////////////////////////////////////
+//documentId
 import axios from "axios";
-import { domain } from "../../store";
+import { domain } from "../../../store";
 
 export const indexProductItems = async (
   pageNo = 1,
@@ -33,7 +35,6 @@ export const indexProductItems = async (
         sort: [ "price"],  //"name",
       },
     });
-
     return {
       total: res.data.meta.pagination.total,
       data: res.data.data,
@@ -43,3 +44,6 @@ export const indexProductItems = async (
     return { total: 0, data: [] };
   }
 };
+/////////////////////////////////////////////
+
+

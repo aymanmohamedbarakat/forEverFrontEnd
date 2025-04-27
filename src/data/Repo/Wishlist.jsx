@@ -1,5 +1,6 @@
 import {
   addToUserWishlist,
+  // clearAllUserWishlist,
   getWishlistItem,
   removeFromUserWishlist,
   userWishlist,
@@ -21,4 +22,8 @@ export const WishlistRepo = {
   getWishlistItem: async (wishlistItemId) => {
     return getWishlistItem(wishlistItemId);
   },
+
+  // clearAllWishlists: async (userId) => {
+  //   return clearAllUserWishlist(userId);
+  // },
 };

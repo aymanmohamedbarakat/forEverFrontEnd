@@ -1,5 +1,5 @@
 import axios from "axios";
-import { domain } from "../../store";
+import { domain } from "../../../store";
 import { toast } from "react-toastify";
 
 export const userToken = async (token) => {

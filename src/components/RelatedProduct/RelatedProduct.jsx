@@ -48,18 +48,17 @@ export default function RelatedProduct({ category, sub_category }) {
           1200: { slidesPerView: 4, spaceBetween: 20 },
         }}
       >
-        {related.map((product, index) => (
+        {related.map((el, index) => (
           <SwiperSlide key={index}>
             <ProductItem
-              key={product.documentId}
-              id={product.documentId}
-              name={product.name}
-              imgUrl={
-                product.image?.[0]?.url
-                  ? domain + product.image[0].url
-                  : undefined
-              }
-              price={product.price}
+              key={el.documentId}
+              id={el.documentId}
+              name={el.name}
+              imgUrl={el.image?.[0]?.url ? domain + el.image[0].url : undefined}
+              price={el.price}
+              bestSeller={el.bestSeller}
+              category={el.category}
+              sub_category={el.sub_category}
             />
           </SwiperSlide>
         ))}

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { domain } from "../../store";
+import { domain } from "../../../store";
 
 export const indexCategories = async () => {
   let final = [];

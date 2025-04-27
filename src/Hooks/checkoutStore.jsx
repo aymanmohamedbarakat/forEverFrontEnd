@@ -1,182 +1,87 @@
-// import { create } from "zustand";
-// import { useAuthStore } from "./authStore";
-// import { useCartStore } from "./cartStore";
-// import { createOrder } from "../data/apis/create_order";
-// import { addOrderItem } from "../data/apis/add_order_item";
-
-// export const useCheckOutStore = create((set, get) => ({
-//   formData: {},
-//   method: "cod",
-
-//   setFormData: (data) => set({ formData: data }),
-//   setMethod: (paymentMethod) => set({ method: paymentMethod }),
-
-//   handlePlaceOrder: async () => {
-//     try {
-//       const { currentUser, authToken } = useAuthStore.getState();
-
-//       const { cartItems, clearCart } = useCartStore.getState();
-//       const { formData, method } = get();
-//       console.log("🔐 user:", currentUser);
-//       console.log("🔐 authToken:", authToken);
-//       if (cartItems.length === 0) throw new Error("Cart is empty");
-//       if (!currentUser) throw new Error("User not authenticated");
-
-//       const address = `${formData.street}, ${formData.city}, ${formData.state}, ${formData.zipCode}, ${formData.country}`;
-
-//       const orderRes = await createOrder(
-//         currentUser.id,
-//         method,
-//         address,
-//         authToken
-//       );
-//       const orderId = orderRes?.data?.id;
-
-//       if (!orderId) throw new Error("Order not created");
-
-//       for (const item of cartItems) {
-//         await addOrderItem(
-//           orderId,
-//           item.documentId,
-//           item.quantity,
-//           item.size,
-//           authToken
-//         );
-//       }
-
-//       clearCart();
-//       set({ formData: {}, method: "cod" });
-
-//       return true;
-//     } catch (error) {
-//       console.error("❌ handlePlaceOrder error:", error);
-//       return false;
-//     }
-//   },
-// }));
-//////////////////////////////////////
-// import { create } from "zustand";
-// import { useAuthStore } from "./authStore";
-// import { useCartStore } from "./cartStore";
-// import { OrderRepo } from "../data/Repo/OrderRepo";
-// import { toast } from "react-toastify";
-
-// export const useCheckOutStore = create((set, get) => ({
-//   formData: {},
-//   method: "cod",
-
-//   setFormData: (data) => set({ formData: data }),
-//   setMethod: (paymentMethod) => set({ method: paymentMethod }),
-
-//   handlePlaceOrder: async () => {
-//     try {
-//       const { currentUser, authToken } = useAuthStore.getState();
-//       const { cartItems, clearCart } = useCartStore.getState();
-
-//       // Validate essential data
-//       if (cartItems.length === 0) {
-//         toast.error("Your cart is empty");
-//         throw new Error("Cart is empty");
-//       }
-
-//       if (!currentUser) {
-//         toast.error("Please log in to place an order");
-//         throw new Error("User not authenticated");
-//       }
-
-//       const { formData } = get();
-
-//       if (
-//         !formData.street ||
-//         !formData.city ||
-//         !formData.state ||
-//         !formData.zipCode ||
-//         !formData.country
-//       ) {
-//         toast.error("Please complete your address information");
-//         throw new Error("Address information incomplete");
-//       }
-
-//       // Use the OrderRepo to place the order
-//       const result = await OrderRepo.placeOrder(
-//         currentUser.id,
-//         cartItems,
-//         authToken
-//       );
-
-//       if (result.success) {
-//         clearCart();
-//         set({ formData: {}, method: "cod" });
-//         return true;
-//       } else {
-//         return false;
-//       }
-//     } catch (error) {
-//       console.error("❌ handlePlaceOrder error:", error);
-//       toast.error(error.message || "Failed to place order");
-//       return false;
-//     }
-//   },
-// }));
-//////////////////////////////////////////////////////////////////
 import { create } from "zustand";
 import { useAuthStore } from "./authStore";
 import { useCartStore } from "./cartStore";
-import { OrderRepo } from "../data/Repo/OrderRepo";
 import { toast } from "react-toastify";
+import { orderRepo } from "../data/Repo/OrderRepo";
 
 export const useCheckOutStore = create((set, get) => ({
-  formData: {},
-  method: "cod",
+  formData: {
+    firstName: "",
+    lastName: "",
+    email: "",
+    street: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "",
+    phone: "",
+  },
 
+  method: "cod",
   setFormData: (data) => set({ formData: data }),
   setMethod: (paymentMethod) => set({ method: paymentMethod }),
 
   handlePlaceOrder: async () => {
     try {
+      const { formData, method } = get();
+      // Validate address information
+      if (
+        !formData.firstName ||
+        !formData.lastName ||
+        !formData.email ||
+        !formData.street ||
+        !formData.city ||
+        !formData.state ||
+        !formData.zipCode ||
+        !formData.country ||
+        !formData.phone
+      ) {
+        toast.error("Please complete your address information");
+        throw new Error("Address information incomplete");
+      }
+      const addressInformation = `${formData.street}, ${formData.city}, ${formData.state}, ${formData.zipCode}, ${formData.country}`;
+      console.log(
+        "Submitting order with data:",
+        addressInformation,
+        "and method:",
+        method
+      );
+
       const { currentUser, authToken } = useAuthStore.getState();
       const { cartItems, clearCart } = useCartStore.getState();
 
-      // Validate essential data
-      if (cartItems.length === 0) {
-        toast.error("Your cart is empty");
-        throw new Error("Cart is empty");
+      if (!cartItems || cartItems.length === 0) {
+        toast.error("Your cart is empty", {
+          position: "top-right",
+          autoClose: 2000,
+        });
+        return false;
       }
+      console.log("Cart items for order:", cartItems);
 
       if (!currentUser) {
         toast.error("Please log in to place an order");
         throw new Error("User not authenticated");
       }
 
-      const { formData } = get();
-
-      // Validate address information
-      if (
-        !formData.street ||
-        !formData.city ||
-        !formData.state ||
-        !formData.zipCode ||
-        !formData.country
-      ) {
-        toast.error("Please complete your address information");
-        throw new Error("Address information incomplete");
-      }
-
-      // Format the address string
-      const address = `${formData.street}, ${formData.city}, ${formData.state}, ${formData.zipCode}, ${formData.country}`;
-
-      // Use the OrderRepo to place the order with address
-      const result = await OrderRepo.placeOrder(
-        currentUser.id,
-        cartItems,
-        authToken,
-        address
+      const result = await orderRepo.placeOrder(
+        cartItems,           // 1st - cart items array
+        currentUser.id,      // 2nd - user ID
+        authToken,           // 3rd - auth token
+        formData,            // 4th - form data
+        method,              // 5th - payment method
+        addressInformation   // 6th - address info
       );
+      console.log("Order placement result:", result);
+
+      // Place the order with proper authentication
 
       if (result.success) {
-        clearCart();
+        // clearCart();
         set({ formData: {}, method: "cod" });
-        toast.success("Order placed successfully! Thank you for your purchase.");
+        toast.success(
+          "Order placed successfully! Thank you for your purchase."
+        );
         return true;
       } else {
         toast.error("Unable to place your order. Please try again.");

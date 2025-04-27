@@ -1,104 +1,145 @@
-import { toast } from "react-toastify";
-import { createOrder } from "../apis/create_order";
-import { addOrderItem } from "../apis/add_order_item";
-import { getOrderById, getOrderItems, getOrders } from "../apis/orders_user";
+// import { addOrderItem, createOrders } from "../apis/Orders/order_index";
+// import { getOrderById, getOrderItems, getUserOrders } from "../apis/Orders/user_order";
 
-export const OrderRepo = {
-  placeOrder: async (userId, cartItems, token, address = {}) => {
+// export const orderRepo = {
+//   placeOrder: async (
+//     cartItems,
+//     userId,
+//     token,
+//     // formData,
+//     // paymentMethod,
+//     // addressInformation
+//   ) => {
+//     console.log("Starting order placement:", {
+//       userId,
+//       cartItems: cartItems.length,
+//       hasToken: !!token,
+//     });
+
+//     try {
+//       const orderData = await createOrders(userId, token);
+
+//       if (!orderData) {
+//         throw new Error("Failed to get order ID from server");
+//       }
+
+//       const orderId = orderData.id;
+//       console.log("Order created with ID:", orderId);
+
+//       for (const item of cartItems) {
+//         console.log("Processing item:", item);
+//         await addOrderItem({
+//           orderId: orderId,
+//           productId: item.documentId,
+//           quantity: item.quantity,
+//           size: item.size,
+//           userId: userId,
+//           token: token,
+//         });
+//       }
+//       console.log("Order placed successfully!");
+//       return { success: true, orderId };
+//     } catch (error) {
+//       console.error("Error in placeOrder:", error);
+//       throw error;
+//     }
+//   },
+
+//   getOrder: async (userId, token) => {
+//     return await getUserOrders(userId, token);
+//   },
+
+//   getOrderItems: async (orderId, token) => {
+//     return await getOrderItems(orderId, token);
+//   } ,
+
+//   getOrderDetailsById: async (orderId, token) => {
+//     return await getOrderById(orderId, token);
+//   }
+// };
+// last update before claudi
+////////////////////////////////////////////////////////////
+
+import {
+  addOrderItem,
+  createOrders,
+  // updateOrderTotal,
+} from "../apis/Orders/order_index";
+import {
+  getOrderById,
+  getOrderItems,
+  getUserOrders,
+} from "../apis/Orders/user_order";
+export const orderRepo = {
+  placeOrder: async (
+    cartItems,
+    userId,
+    token,
+    formData,
+    paymentMethod,
+    addressInformation
+  ) => {
+    console.log("Starting order placement:", {
+      userId,
+      cartItems: cartItems.length,
+      hasToken: !!token,
+    });
+
     try {
-      const orderId = await createOrder(userId, token, address);
-      if (!orderId) {
-        throw new Error("Failed to create order");
-      }
-      console.log("Order created with ID:", orderId);
-      for (const item of cartItems) {
-        console.log("Adding item to order:", item);
-        await addOrderItem(
-          orderId,
-          item.productId,
-          item.quantity,
-          item.size,
-          token
-        );
-      }
-
-      toast.success("Order placed successfully!");
-      return { success: true, orderId };
-    } catch (error) {
-      console.error("Error placing order:", error);
-      toast.error("Error placing order. Please try again.");
-      return { success: false, error: error.message };
-    }
-  },
-
-  getUserOrders: async (userId, token) => {
-    try {
-      console.log("Fetching orders for user:", userId);
-      const orders = await getOrders(userId, token);
-      console.log("Raw orders response:", orders);
-
-      if (!Array.isArray(orders)) {
-        console.error("Expected orders to be an array, got:", typeof orders);
-        return [];
-      }
-
-      const ordersWithItems = await Promise.all(
-        orders.map(async (order) => {
-          try {
-            console.log(`Fetching items for order ${order.id}`);
-            const orderItems = await getOrderItems(order.id, token);
-            console.log(`Items for order ${order.id}:`, orderItems);
-
-            return {
-              ...order,
-              items: Array.isArray(orderItems) ? orderItems : [],
-            };
-          } catch (itemError) {
-            console.error(
-              `Error fetching items for order ${order.id}:`,
-              itemError
-            );
-            return {
-              ...order,
-              items: [],
-            };
-          }
-        })
+      // Create the order with more details
+      const orderData = await createOrders(
+        userId,
+        token,
+        addressInformation,
+        formData,
+        paymentMethod
       );
 
-      return ordersWithItems;
+      if (!orderData) {
+        throw new Error("Failed to get order ID from server");
+      }
+
+      const orderId = orderData.id;
+      console.log("Order created with ID:", orderId);
+
+      // let totalPrice = 0;
+
+      // Add items to the order
+      for (const item of cartItems) {
+        console.log("Processing item:", item);
+        await addOrderItem({
+          orderId: orderId,
+          productId: item.documentId,
+          quantity: item.quantity,
+          size: item.size,
+          userId: userId,
+          token: token,
+        });
+
+        // Calculate total price
+        // totalPrice += item.price * item.quantity;
+      }
+
+      // Update order with total price
+      // await updateOrderTotal(orderId, totalPrice, token);
+
+      console.log("Order placed successfully!");
+      return { success: true, orderId };
     } catch (error) {
-      console.error("Error in getUserOrders:", error);
-      toast.error("Failed to load orders");
-      return [];
+      console.error("Error in placeOrder:", error);
+      throw error;
     }
   },
 
-  getOrderDetails: async (orderId, token) => {
-    try {
-      const order = await getOrderById(orderId, token);
-      const orderItems = await getOrderItems(orderId, token);
-
-      return {
-        ...order,
-        items: orderItems || [],
-      };
-    } catch (error) {
-      console.error(`Error in getOrderDetails:`, error);
-      toast.error("Failed to load order details");
-      return null;
-    }
+  getOrder: async (userId, token) => {
+    return await getUserOrders(userId, token);
   },
 
-  calculateOrderTotal: (items) => {
-    if (!items || items.length === 0) return 0;
+  getOrderItems: async (orderId, token) => {
+    return await getOrderItems(orderId, token);
+  },
 
-    return items
-      .reduce((total, item) => {
-        const product = item.product || (item.products && item.products[0]);
-        const price = product ? product.price || 0 : 0;
-        return total + price * (item.quantity || 1);
-      }, 0)
-      .toFixed(2);
+  getOrderDetailsById: async (orderId, token) => {
+    return await getOrderById(orderId, token);
   },
 };

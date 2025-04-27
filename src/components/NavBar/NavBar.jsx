@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { assets } from "../../assets/frontend_assets/assets";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useLinks, useSideHeader } from "../../Hooks/uiStore";
-import { CgHeart, CgMenuMotion, CgSearch, CgShoppingBag } from "react-icons/cg";
+import { useLinks, useSearchStore, useSideHeader } from "../../Hooks/uiStore";
+import { CgHeart, CgMenuMotion, CgShoppingBag } from "react-icons/cg";
 import SideBar from "../SideBar/SideBar";
 import { useCartStore } from "../../Hooks/cartStore";
 import { useAuthStore } from "../../Hooks/authStore";
 import { userWishlistStore } from "../../Hooks/wishlistStore";
+import { Search } from "lucide-react";
 
 export default function NavBar() {
   const { Links } = useLinks();
@@ -15,6 +16,7 @@ export default function NavBar() {
   const { getCartCount } = useCartStore();
   const { currentUser, isAuthenticated, logout } = useAuthStore();
   const { wishlist, getWishlists } = userWishlistStore();
+  const { openSearch } = useSearchStore();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -29,12 +31,12 @@ export default function NavBar() {
   }, [isAuthenticated, currentUser, getWishlists]);
 
   return (
-    <div className="flex items-center justify-between py-5 font-medium">
+    <div className="flex items-center justify-between py-5 gap-5 font-medium">
       <Link to="/">
         <img src={assets.logo} className="w-36" alt="Logo" />
       </Link>
 
-      <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
+      <ul className="hidden sm:flex gap-5 text-sm text-gray-700 font-semibold">
         {links.map((link, index) => (
           <NavLink
             to={link.url}
@@ -47,16 +49,12 @@ export default function NavBar() {
         ))}
       </ul>
       {/* Icons */}
-      <div className="flex items-center gap-5">
-        {/* <img
-          src={assets.search_icon}
-          className="w-4 cursor-pointer"
-          //   onClick={openSearch}
-          alt=""
-        /> */}
-        <CgSearch
-          className="text-lg cursor-pointer"
-          //  onClick={openSearch}
+      <div className="flex items-center gap-3 text-gray-700">
+        <Search
+          size={18}
+          strokeWidth={3}
+          className="text-black cursor-pointer"
+          onClick={openSearch}
         />
         <div className="group relative">
           <div className="cursor-pointer relative">
@@ -70,7 +68,7 @@ export default function NavBar() {
                     </p>
                     <p
                       className="cursor-pointer hover:text-black"
-                      // onClick={() => navigate("/profile")}
+                      onClick={() => navigate("/profile")}
                     >
                       My Profile
                     </p>
@@ -82,7 +80,7 @@ export default function NavBar() {
                     </p>
                     <p
                       className="cursor-pointer hover:text-black"
-                      // onClick={navigateToOrders}
+                      onClick={() => navigate("/orders")}
                     >
                       My Orders
                     </p>
@@ -121,10 +119,9 @@ export default function NavBar() {
         >
           <CgHeart className="text-lg" />
           {wishlist.length > 0 && (
-
-          <p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]">
-            {wishlist.length}
-          </p>
+            <p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]">
+              {wishlist.length}
+            </p>
           )}
         </Link>
 

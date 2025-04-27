@@ -12,7 +12,10 @@ import RegisterPage from "./pages/RegisterPage";
 import { useAuthStore } from "./Hooks/authStore";
 import AuthGuard from "./Guard/AuthGuard";
 import WishlistPage from "./pages/WishlistPage";
-import OrderPage from "./pages/OrderPage";
+import Order from "./pages/Order";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Profile from "./pages/Profile";
 export default function App() {
   const { validateToken } = useAuthStore();
 
@@ -25,8 +28,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<UserLayout />}>
           <Route index element={<HomePage />} />
-          <Route path="/about" element={<h1>about</h1>} />
-          <Route path="/contact" element={<h1>contact</h1>} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
         </Route>
 
         <Route
@@ -41,8 +44,10 @@ export default function App() {
           <Route path="products/:productId" element={<DetailsPage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/place-order" element={<PlaceOrders />} />
-          <Route path="/orders" element={<OrderPage />} />
+          <Route path="/orders" element={<Order />} />
+          {/* <Route path="/orders/:orderId" element={<Order />} /> */}
           <Route path="*" element={<h1>Page Not Found</h1>} />
         </Route>
 

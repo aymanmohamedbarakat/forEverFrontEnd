@@ -5,20 +5,22 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { domain } from "../../../store";
 import ProductItem from "../../ProductItem/ProductItem";
+
 export default function BestSeller() {
   const [bestSeller, setBestSeller] = useState([]);
 
   useEffect(() => {
     ShopRepo.index_productItems()
       .then((res) => {
-        console.log("API Response:", res);
-        const bestSellers = (res?.data || []).filter(
-          (product) => product.bestseller?.bestseller === true
+        const bestSeller = (res?.data || []).filter(
+          (product) => product.bestSeller === true
         );
-        setBestSeller(bestSellers.slice(0, 10));
+        setBestSeller(bestSeller.slice(0, 7));
+        console.log("API Response:", res.data);
       })
       .catch((err) => console.error("Error fetching bestsellers:", err));
   }, []);
+
   return (
     <div className="my-10">
       <div className="text-center py-8 text-2xl md:text-3xl">
@@ -45,9 +47,8 @@ export default function BestSeller() {
           1200: { slidesPerView: 4, spaceBetween: 20 },
         }}
       >
-        {Array.isArray(bestSeller) && bestSeller.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4 sm:px-10">
-            {bestSeller.map((el, index) => (
+        {Array.isArray(bestSeller) && bestSeller.length > 0
+          ? bestSeller.map((el, index) => (
               <SwiperSlide key={index}>
                 <ProductItem
                   key={el.documentId}
@@ -57,13 +58,14 @@ export default function BestSeller() {
                     el.image?.[0]?.url ? domain + el.image[0].url : undefined
                   }
                   price={el.price}
+                  bestSeller={el.bestSeller}
+                  category={el.category}
+                  sub_category={el.sub_category}
                 />
               </SwiperSlide>
-            ))}
-          </div>
-        ) : null}
+            ))
+          : null}
       </Swiper>
     </div>
   );
 }
-

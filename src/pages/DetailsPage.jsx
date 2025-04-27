@@ -1,3 +1,5 @@
+/////////////////////////////////////////////////////////////////////////
+//documentId
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ShopRepo } from "../data/Repo/ShopRepo";
@@ -170,3 +172,4 @@ export default function DetailsPage() {
     </>
   );
 }
+/////////////////////////////////////////////////////////
