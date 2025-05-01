@@ -3,8 +3,8 @@ import { ShopRepo } from "../../data/Repo/ShopRepo";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import ProductItem from "../ProductItem/ProductItem";
-import Title from "../Title/Title"; // Added import for Title component
-import { domain } from "../../store"; // Added import for domain
+import Title from "../Title/Title"; 
+import { domain } from "../../store"; 
 
 export default function RelatedProduct({ category, sub_category }) {
   const [related, setRelated] = useState([]);

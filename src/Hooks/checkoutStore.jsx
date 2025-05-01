@@ -40,12 +40,12 @@ export const useCheckOutStore = create((set, get) => ({
         throw new Error("Address information incomplete");
       }
       const addressInformation = `${formData.street}, ${formData.city}, ${formData.state}, ${formData.zipCode}, ${formData.country}`;
-      console.log(
-        "Submitting order with data:",
-        addressInformation,
-        "and method:",
-        method
-      );
+      // console.log(
+      //   "Submitting order with data:",
+      //   addressInformation,
+      //   "and method:",
+      //   method
+      // );
 
       const { currentUser, authToken } = useAuthStore.getState();
       const { cartItems, clearCart } = useCartStore.getState();
@@ -57,7 +57,7 @@ export const useCheckOutStore = create((set, get) => ({
         });
         return false;
       }
-      console.log("Cart items for order:", cartItems);
+      // console.log("Cart items for order:", cartItems);
 
       if (!currentUser) {
         toast.error("Please log in to place an order");
@@ -65,19 +65,17 @@ export const useCheckOutStore = create((set, get) => ({
       }
 
       const result = await orderRepo.placeOrder(
-        cartItems,           // 1st - cart items array
-        currentUser.id,      // 2nd - user ID
-        authToken,           // 3rd - auth token
-        formData,            // 4th - form data
-        method,              // 5th - payment method
-        addressInformation   // 6th - address info
+        cartItems,
+        currentUser.id,
+        authToken,
+        formData,
+        method,
+        addressInformation
       );
-      console.log("Order placement result:", result);
-
-      // Place the order with proper authentication
+      // console.log("Order placement result:", result);
 
       if (result.success) {
-        // clearCart();
+        clearCart();
         set({ formData: {}, method: "cod" });
         toast.success(
           "Order placed successfully! Thank you for your purchase."
@@ -88,7 +86,7 @@ export const useCheckOutStore = create((set, get) => ({
         return false;
       }
     } catch (error) {
-      console.error("❌ handlePlaceOrder error:", error);
+      // console.error("❌ handlePlaceOrder error:", error);
       toast.error(error.message || "Failed to place order");
       return false;
     }

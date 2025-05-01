@@ -12,7 +12,6 @@ export const userWishlistStore = create((set, get) => ({
       const response = await WishlistRepo.getAllWishlists(userId);
 
       if (response) {
-        // Process data to ensure proper structure
         const formattedWishlist = response.map((item) => {
           const formattedProduct = item.product && {
             ...item.product,
@@ -32,7 +31,7 @@ export const userWishlistStore = create((set, get) => ({
       set({ loading: false });
       return [];
     } catch (error) {
-      console.error("Failed to fetch wishlist items:", error);
+      // console.error("Failed to fetch wishlist items:", error);
       toast.error("Failed to fetch wishlist items");
       set({ loading: false });
       return [];
@@ -62,7 +61,7 @@ export const userWishlistStore = create((set, get) => ({
 
       return false;
     } catch (error) {
-      console.error("Failed to add item to wishlist:", error);
+      // console.error("Failed to add item to wishlist:", error);
       toast.error("Failed to add to wishlist");
       return false;
     }
@@ -88,7 +87,7 @@ export const userWishlistStore = create((set, get) => ({
       toast.error("Could not remove item");
       return false;
     } catch (error) {
-      console.error("Failed to remove item from wishlist:", error);
+      // console.error("Failed to remove item from wishlist:", error);
       toast.error("Failed to remove from wishlist");
       return false;
     }

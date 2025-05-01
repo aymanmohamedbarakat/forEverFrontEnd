@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { assets } from "../../assets/frontend_assets/assets";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useLinks, useSearchStore, useSideHeader } from "../../Hooks/uiStore";
 import { CgHeart, CgMenuMotion, CgShoppingBag } from "react-icons/cg";
 import SideBar from "../SideBar/SideBar";
-import { useCartStore } from "../../Hooks/cartStore";
-import { useAuthStore } from "../../Hooks/authStore";
-import { userWishlistStore } from "../../Hooks/wishlistStore";
 import { Search } from "lucide-react";
+import {
+  useAuthStore,
+  useCartStore,
+  useLinks,
+  userWishlistStore,
+  useSearchStore,
+  useSideHeader,
+} from "../../store";
 
 export default function NavBar() {
   const { Links } = useLinks();
@@ -52,8 +56,8 @@ export default function NavBar() {
       <div className="flex items-center gap-3 text-gray-700">
         <Search
           size={18}
-          strokeWidth={3}
-          className="text-black cursor-pointer"
+          strokeWidth={2}
+          className="text-gray-700 cursor-pointer"
           onClick={openSearch}
         />
         <div className="group relative">
@@ -133,18 +137,10 @@ export default function NavBar() {
             </p>
           )}
         </Link>
-
-        {/* <img
-          onClick={openSideHeader}
-          src={assets.menu_icon}
-          className="w-5 cursor-pointer sm:hidden"
-          alt=""
-        /> */}
         <CgMenuMotion
           onClick={openSideHeader}
           className="w-5 cursor-pointer sm:hidden"
         />
-
         {index && <SideBar />}
       </div>
     </div>

@@ -3,14 +3,13 @@ import React, { useEffect } from "react";
 import Title from "../components/Title/Title";
 import CartTotal from "../components/CartTotal/CartTotal";
 import { assets } from "../assets/frontend_assets/assets";
-
 import * as Yup from "yup";
-import { useAuthStore } from "../Hooks/authStore";
 import { useNavigate } from "react-router-dom";
-import { useCheckOutStore } from "../Hooks/checkoutStore";
 import { toast } from "react-toastify";
+import { useAuthStore, useCheckOutStore } from "../store";
 export default function PlaceOrders() {
-  const { formData, setFormData, method, setMethod, handlePlaceOrder } = useCheckOutStore();
+  const { formData, setFormData, method, setMethod, handlePlaceOrder } =
+    useCheckOutStore();
   const { currentUser, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
   const PhoneRegex = /^\+201[0125]\d{8}$/;
@@ -37,25 +36,24 @@ export default function PlaceOrders() {
   }, [method, setMethod]);
 
   const onSubmitOrder = async (values) => {
-    try{
-          setFormData(values);
-    console.log("Submitting order with data:", values, "and method:", method);
-    const success = await handlePlaceOrder();
+    try {
+      setFormData(values);
+      console.log("Submitting order with data:", values, "and method:", method);
+      const success = await handlePlaceOrder();
 
-    if (success) {
-      toast.success("Order placed successfully!");
-      navigate("/orders");
-    } else {
-      toast.error("Failed to place order. Try again.");
-    }
-    } catch(error){
+      if (success) {
+        toast.success("Order placed successfully!");
+        navigate("/orders");
+      } else {
+        toast.error("Failed to place order. Try again.");
+      }
+    } catch (error) {
       console.error("Order submission error:", error);
       toast.error("Something went wrong while placing your order", {
         position: "top-right",
         autoClose: 2000,
       });
     }
-
   };
 
   useEffect(() => {
@@ -274,7 +272,6 @@ export default function PlaceOrders() {
                 <div className="w-full text-end mt-8">
                   <button
                     type="submit"
-                    // onClick={() => navigate("/orders")}
                     className="bg-black text-white px-16 py-3 text-sm hover:bg-gray-800 transition-colors"
                   >
                     {isSubmitting ? "PROCESSING..." : "PLACE ORDER"}

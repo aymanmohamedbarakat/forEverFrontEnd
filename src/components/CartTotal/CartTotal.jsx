@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Title from "../Title/Title";
-import { currency, delivery_fee } from "../../store";
-import { useCartStore } from "../../Hooks/cartStore";
+import { currency, delivery_fee, useCartStore } from "../../store";
 import { ShopRepo } from "../../data/Repo/ShopRepo";
 
 export default function CartTotal() {
@@ -11,7 +10,6 @@ export default function CartTotal() {
   const total = subtotal + delivery_fee;
 
   useEffect(() => {
-    // Fetch product data
     ShopRepo.index_productItems().then((res) => {
       console.log(res.data);
       setProducts(res.data);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useSearchStore } from "../../Hooks/uiStore";
 import { CircleX, Search } from "lucide-react";
+import { useSearchStore } from "../../store";
 
 export default function SearchBar() {
   const { search, setSearch, showSearch, closeSearch } = useSearchStore();

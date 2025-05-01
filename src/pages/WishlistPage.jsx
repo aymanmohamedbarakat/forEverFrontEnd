@@ -1,17 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../Hooks/authStore";
-import { userWishlistStore } from "../Hooks/wishlistStore";
-import { domain } from "../store";
+import { domain, useAuthStore, userWishlistStore } from "../store";
 import Title from "../components/Title/Title";
-import {
-  ArrowRight,
-  Eye,
-  HeartOff,
-  RefreshCcw,
-  ShoppingBag,
-} from "lucide-react";
-import { FaShoppingCart } from "react-icons/fa";
+import { ArrowRight, Eye, HeartOff } from "lucide-react";
 
 export default function WishlistPage() {
   const navigate = useNavigate();
@@ -21,11 +12,11 @@ export default function WishlistPage() {
     getWishlists,
     removeFromWishlist,
     loading,
-    clearWishlists,
+    // clearWishlists,
   } = userWishlistStore();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isClearingWishlist, setIsClearingWishlist] = useState(false);
+  // const [isClearingWishlist, setIsClearingWishlist] = useState(false);
 
   useEffect(() => {
     const loadWishlist = async () => {

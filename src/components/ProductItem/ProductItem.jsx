@@ -11,7 +11,6 @@ export default function ProductItem({
   category,
   sub_category,
 }) {
-  // Extract category and sub-category names, handling null/undefined values
   const categoryName = category?.CategoryName || "Uncategorized";
   const subCategoryName = sub_category?.SubName;
 
@@ -72,65 +71,3 @@ export default function ProductItem({
     </div>
   );
 }
-// <Link className="text-gray-700 cursor-pointer" to={`/products/${id}`}>
-//   <div className="overflow-hidden">
-// <img
-//   className="hover:scale-110 transition ease-in-out"
-//   src={
-//     imgUrl ||
-//     "https://www.mobismea.com/upload/iblock/2a0/2f5hleoupzrnz9o3b8elnbv82hxfh4ld/No%20Product%20Image%20Available.png"
-//   }
-//   alt=""
-// />
-//   </div>
-//   <p className="pt-3 pb-1 text-sm">{name}</p>
-//   <p className="text-sm font-medium">
-//     {currency}
-//     {price}
-//   </p>
-// </Link>
-// bestSellerOffer
-// :
-// true
-// category
-// :
-// {id: 10, documentId: 'qjfvtnreb45xk9pt17t15bu2', createdAt: '2025-04-13T14:41:30.589Z', updatedAt: '2025-04-20T20:12:15.599Z', publishedAt: '2025-04-20T20:12:15.625Z', …}
-// createdAt
-// :
-// "2025-04-20T20:11:32.006Z"
-// date
-// :
-// null
-// description
-// :
-// "A lightweight, usually knitted, pullover shirt, close-fitting and with a round neckline and short sleeves, worn as an undershirt or outer garment."
-// documentId
-// :
-// "ol7de43emi9u18ajoe0oxg74"
-// id
-// :
-// 329
-// image
-// :
-// [{…}]
-// name
-// :
-// "Women Round Neck Cotton Top"
-// price
-// :
-// 100
-// publishedAt
-// :
-// "2025-04-27T19:33:35.440Z"
-// size
-// :
-// {id: 18, documentId: 'rykkpywpn905omdku6qpgtjh', createdAt: '2025-04-20T22:36:04.406Z', updatedAt: '2025-04-20T22:40:32.748Z', publishedAt: '2025-04-20T22:40:32.765Z', …}
-// sub_category
-// :
-// {id: 16, documentId: 'u0cq14hy6l6etfi1rcizgyot', createdAt: '2025-04-13T14:51:29.342Z', updatedAt: '2025-04-20T22:17:40.575Z', publishedAt: '2025-04-20T22:17:40.594Z', …}
-// updatedAt
-// :
-// "2025-04-27T19:33:35.415Z"
-// wishlists
-// :
-// []

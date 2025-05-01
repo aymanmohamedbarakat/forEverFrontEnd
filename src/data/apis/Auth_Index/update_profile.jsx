@@ -19,7 +19,7 @@ export const updateUserProfile = async (userId, values, currentUser, token) => {
     const response = await axios.put(
       `${domain}/api/users/${userId}`,
       {
-        username: values.name, // Map name to username field as needed
+        username: values.name,
         email: values.email,
         phone: values.phone,
       },

@@ -1,52 +1,38 @@
-// import React, { useEffect } from "react";
-// import { orderRepo } from "../data/Repo/OrderRepo";
-// import { useAuthStore } from "../Hooks/authStore";
-
-// export default function Order() {
-// const {currentUser ,authToken }  =useAuthStore()
-//   useEffect(() => {
-//     if (currentUser && authToken) {
-//       orderRepo.getOrder(currentUser.id, authToken).then((res) => {
-//         console.log("Order data:", res);
-//       });
-//     }
-//   }, [currentUser, authToken]);
-
-//   return (
-//     <div>
-//       Order
-//       <span className="text-sm">Pending</span>
-//       {/* {statusInfo.text} */}
-//       <p className="text-sm text-gray-600 sm:text-base font-medium">
-//         Product Name {/* {product.name || "Product Name"} */}
-//       </p>
-//       <p className="text-lg font-semibold">
-//         {/* {currency}
-//         {product.price || 0} */}
-//         $100.00
-//       </p>
-//       <p>Quantity: 1 </p>
-//       {/*{item.quantity || 1} */}
-//       <p className="">Size: L</p>
-//       {/*{item.size}*/}
-//       Total: $1800 {/* {currency} {totalPrice} */}
-//     </div>
-//   );
-// }
-
-/////////////////////////////////////////////////////////
-
 import React, { useEffect, useState } from "react";
 import { orderRepo } from "../data/Repo/OrderRepo";
-import { useAuthStore } from "../Hooks/authStore";
+import { useNavigate } from "react-router-dom";
+import Title from "../components/Title/Title";
+import { currency, domain, useAuthStore } from "../store";
 
 export default function Order() {
+  const navigate = useNavigate();
   const { currentUser, authToken } = useAuthStore();
   const [orders, setOrders] = useState([]);
-  // const [orderItems, setOrderItems] = useState([]);
-  const [ordersWithDetails, setOrdersWithDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Format date function - explicitly set to format like "May 1, 2025"
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  // Get status info with color and text
+  const getStatusInfo = (status) => {
+    const statusMap = {
+      pending: { color: "bg-yellow-400", text: "Pending" },
+      processing: { color: "bg-blue-400", text: "Processing" },
+      shipped: { color: "bg-purple-400", text: "Shipped" },
+      delivered: { color: "bg-green-400", text: "Delivered" },
+      cancelled: { color: "bg-red-400", text: "Cancelled" },
+    };
+
+    return statusMap[status?.toLowerCase()] || statusMap.pending;
+  };
 
   useEffect(() => {
     async function getOrders() {
@@ -57,9 +43,13 @@ export default function Order() {
           return;
         }
 
-        const orderData = await orderRepo.getOrder(currentUser.id, authToken);
+        const response = await orderRepo.getOrder(currentUser.id, authToken);
+        // The response could be the array directly or nested inside a data property
+        const orderData = Array.isArray(response)
+          ? response
+          : response.data || [];
         setOrders(orderData);
-        console.log(orderData);
+        console.log("API Response:", response);
         setLoading(false);
       } catch (err) {
         console.error("Failed to fetch orders:", err);
@@ -70,220 +60,151 @@ export default function Order() {
     getOrders();
   }, [currentUser, authToken]);
 
-  // useEffect(() => {
-  //   async function getOrdersItems() {
-  //     try {
-  //       if (!currentUser || !authToken) {
-  //         setError("User not authenticated");
-  //         setLoading(false);
-  //         return;
-  //       }
-  //       const allOrderItems = [];
-  //       for (const order of orders) {
-  //         const orderItemsData = await orderRepo.getOrderItems(
-  //           currentUser.id,
-  //           authToken
-  //         );
-  //         allOrderItems.push(...orderItemsData);
-  //       }
-  //       setOrderItems(allOrderItems);
-  //       console.log(allOrderItems);
-  //       setLoading(false);
-  //     } catch (err) {
-  //       console.error("Failed to fetch orders:", err);
-  //       setError(err.message || "Failed to fetch orders");
-  //       setLoading(false);
-  //     }
-  //   }
-  //   getOrdersItems();
-  // }, [currentUser, authToken ,orders]);
-
-  useEffect(() => {
-    async function getOrderDetailsById() {
-      try {
-        if (!currentUser || !authToken || orders.length === 0) {
-          setError("User not authenticated or no orders found");
-          setLoading(false);
-          return;
-        }
-
-        const ordersWithDetails = await Promise.all(
-          orders.map(async (order) => {
-            const orderDetails = await orderRepo.getOrderDetailsById(
-              order.id,
-              authToken
-            );
-            return orderDetails;
-          })
-        );
-
-        setOrdersWithDetails(ordersWithDetails); // تحديث الحالة بالتفاصيل
-        setLoading(false);
-      } catch (err) {
-        console.error("Failed to fetch order details:", err);
-        setError(err.message || "Failed to fetch order details");
-        setLoading(false);
-      }
+  const calculateOrderTotal = (orderItems) => {
+    if (!orderItems || !Array.isArray(orderItems) || orderItems.length === 0) {
+      return 0;
     }
+    return orderItems.reduce((total, item) => {
+      const price =
+        item.products && item.products.length > 0
+          ? item.products[0].price || 0
+          : 0;
+      const quantity = item.quantity || 1;
+      return total + price * quantity;
+    }, 0);
+  };
 
-    if (orders.length > 0) {
-      getOrderDetailsById();
-    }
-  }, [orders, currentUser, authToken]);
+  if (loading)
+    return <div className="text-center py-20">Loading orders...</div>;
+  if (error) return <div className="text-center py-20">Error: {error}</div>;
 
-  if (loading) return <div>Loading orders...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (orders.length === 0) return <div>No orders found.</div>;
+  if (orders.length === 0) {
+    return (
+      <div className="border-t pt-16">
+        <div className="text-xl sm:text-2xl my-3">
+          <Title text1={"MY"} text2={"ORDERS"} />
+        </div>
+        <div className="text-center py-20">
+          <p className="text-lg mb-4">You haven't placed any orders yet</p>
+          <button
+            onClick={() => navigate("/shopping")}
+            className="bg-black text-white px-6 py-2 rounded"
+          >
+            Shop Now
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Your Orders</h2>
-      {ordersWithDetails.map((order) => (
-        <div key={order.id} className="border p-4 mb-4 rounded shadow">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-medium">Order #{order.id}</h3>
-            <span className="text-sm px-2 py-1 bg-yellow-100 rounded">
-              {order.order_status || "Pending"}
-            </span>
-          </div>
-          {/* You would need to adjust this based on your actual data structure */}
-          {/* // Inside your Order rendering function */}
-          {order.order_items.length > 0 ? (
-            order.order_items.map((item) => (
-              <div key={item.id} className="space-y-3">
-                <div className="flex justify-between border-t pt-2">
-                  <div>
-                    <p className="font-medium">
-                      {item.product?.name || "Product"}
-                    </p>
-                    <p className="text-sm">Quantity: {item.quantity || 1}</p>
-                    {item.size && <p className="text-sm">Size: {item.size}</p>}
-                  </div>
-                  <p className="font-semibold">${item.product?.price || 0}</p>
+    <div className="border-t border-gray-300 pt-16">
+      <div className="text-xl sm:text-2xl my-3">
+        <Title text1={"MY"} text2={"ORDERS"} />
+      </div>
+
+      <div className="space-y-6 mt-4">
+        {orders.map((order, index) => {
+          const statusInfo = getStatusInfo(order.order_status);
+          // Calculate order total based on items if available
+          const total = order.total
+            ? order.total
+            : calculateOrderTotal(order.order_items);
+          return (
+            <div
+              key={order.id || index}
+              className="py-4 border border-gray-300 rounded-lg shadow-sm overflow-hidden"
+            >
+              {/* Order header */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-6 py-3 bg-red-50 border-b border-gray-300">
+                <div>
+                  <p className="font-medium">
+                    Order #{order.id || `ORD-${index + 1}`}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {formatDate(order.createdAt)}
+                  </p>
                 </div>
-                <div className="border-t pt-2 text-right">
-                  <p className="font-bold">Total: ${order.total || "N/A"}</p>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`w-2 h-2 rounded-full ${statusInfo.color}`}
+                    ></span>
+                    <span className="text-sm">{statusInfo.text}</span>
+                  </div>
                 </div>
               </div>
-            ))
-          ) : (
-            <p className="text-gray-500">No items in this order</p>
-          )}
-        </div>
-      ))}
+
+              {/* Order items */}
+              <div className="divide-y divide-gray-200">
+                {order.order_items &&
+                  order.order_items.map((item, itemIndex) => (
+                    <div
+                      key={item.id || `item-${itemIndex}`}
+                      className="py-4 px-6 flex items-start gap-4"
+                    >
+                      <img
+                        className="w-16 sm:w-20 object-cover"
+                        src={
+                          item.products &&
+                          item.products.length > 0 &&
+                          item.products[0].image &&
+                          item.products[0].image.length > 0
+                            ? domain + item.products[0].image[0].url
+                            : "/placeholder.svg"
+                        }
+                        alt={
+                          item.products && item.products.length > 0
+                            ? item.products[0].name
+                            : "Product"
+                        }
+                      />
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600 sm:text-base font-medium">
+                          {item.products && item.products.length > 0
+                            ? item.products[0].name
+                            : "Product"}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-3 mt-2 text-base text-gray-700">
+                          <p className="text-lg">
+                            {currency}
+                            {item.products && item.products.length > 0
+                              ? item.products[0].price || 0
+                              : 0}
+                          </p>
+                          <p className="text-sm">
+                            Quantity: {item.quantity || 1}
+                          </p>
+                          <p className="px-2 sm:px-3 sm:py-1 border bg-slate-50">
+                            Size: {item.size || "M"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              {/* Order footer */}
+              <div className="flex justify-between items-center border-t border-gray-200 bg-gray-50 py-4 px-6">
+                <div>
+                  <p className="text-sm text-gray-600 sm:text-base font-medium">
+                    Total: {currency} {parseFloat(total).toFixed(2)}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {order.order_items ? order.order_items.length : 0} item
+                    {order.order_items && order.order_items.length !== 1
+                      ? "s"
+                      : ""}
+                  </p>
+                </div>
+                <button className="border px-5 py-2 text-sm font-medium rounded-sm hover:bg-gray-100">
+                  Track Order
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
-
-// last update before claudi 
-////////////////////////////////////////////////////////////
-
-// import React, { useEffect, useState } from "react";
-// import { orderRepo } from "../data/Repo/OrderRepo";
-// import { useAuthStore } from "../Hooks/authStore";
-
-// export default function Order() {
-//   const { currentUser, authToken } = useAuthStore();
-//   const [orders, setOrders] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     async function fetchOrders() {
-//       try {
-//         if (!currentUser || !authToken) {
-//           setError("User not authenticated");
-//           setLoading(false);
-//           return;
-//         }
-
-//         const orderData = await orderRepo.getOrder(currentUser.id, authToken);
-//         console.log("Orders fetched:", orderData);
-//         setOrders(orderData);
-//         setLoading(false);
-//       } catch (err) {
-//         console.error("Failed to fetch orders:", err);
-//         setError(err.message || "Failed to fetch orders");
-//         setLoading(false);
-//       }
-//     }
-//     fetchOrders();
-//   }, [currentUser, authToken]);
-
-//   if (loading) return <div className="p-4 text-center">Loading orders...</div>;
-//   if (error) return <div className="p-4 text-center text-red-500">Error: {error}</div>;
-//   if (!orders || orders.length === 0) return <div className="p-4 text-center">No orders found.</div>;
-
-//   return (
-//     <div className="p-4">
-//       <h2 className="text-xl font-bold mb-4">Your Orders</h2>
-//       {orders.map((order) => (
-//         <div key={order.id} className="border p-4 mb-4 rounded shadow">
-//           <div className="flex justify-between items-center mb-2">
-//             <h3 className="font-medium">Order #{order.id}</h3>
-//             <span className="text-sm px-2 py-1 bg-yellow-100 rounded">
-//               {order.order_status || "Pending"}
-//             </span>
-//           </div>
-          
-//           {/* Order items section */}
-//           {order.order_item && (
-//             <div className="border-t pt-2 mt-2">
-//               <div className="flex justify-between mb-2">
-//                 <p className="font-medium">
-//                   {order.order_item.product?.name || "Product"}
-//                 </p>
-//                 <p className="font-semibold">${order.order_item.product?.price || 0}</p>
-//               </div>
-//               <div className="text-sm space-y-1">
-//                 <p>Quantity: {order.order_item.quantity || 1}</p>
-//                 {order.order_item.size && <p>Size: {order.order_item.size}</p>}
-//               </div>
-//               <div className="border-t pt-2 mt-2 text-right">
-//                 <p className="font-bold">
-//                   Total: ${(order.order_item.product?.price || 0) * (order.order_item.quantity || 1)}
-//                 </p>
-//               </div>
-//             </div>
-//           )}
-          
-//           {/* If there's no order_item directly on the order, but there are order_items array */}
-//           {!order.order_item && order.order_items && order.order_items.length > 0 && (
-//             <div>
-//               {order.order_items.map((item) => (
-//                 <div key={item.id} className="border-t pt-2 mt-2">
-//                   <div className="flex justify-between mb-2">
-//                     <p className="font-medium">
-//                       {item.product?.name || "Product"}
-//                     </p>
-//                     <p className="font-semibold">${item.product?.price || 0}</p>
-//                   </div>
-//                   <div className="text-sm space-y-1">
-//                     <p>Quantity: {item.quantity || 1}</p>
-//                     {item.size && <p>Size: {item.size}</p>}
-//                   </div>
-//                 </div>
-//               ))}
-//               <div className="border-t pt-2 mt-2 text-right">
-//                 <p className="font-bold">
-//                   Total: ${order.total || calculateTotal(order.order_items)}
-//                 </p>
-//               </div>
-//             </div>
-//           )}
-//         </div>
-//       ))}
-//     </div>
-//   );
-// }
-
-// // Helper function to calculate total if not provided directly
-// function calculateTotal(items) {
-//   if (!items || !Array.isArray(items)) return 0;
-  
-//   return items.reduce((sum, item) => {
-//     const price = item.product?.price || 0;
-//     const quantity = item.quantity || 1;
-//     return sum + (price * quantity);
-//   }, 0);
-// }

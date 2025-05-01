@@ -1,13 +1,11 @@
-/////////////////////////////////////////////////////////////////////////
-//documentId
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ShopRepo } from "../data/Repo/ShopRepo";
-import { currency, domain } from "../store";
+import { currency, domain, useCartStore } from "../store";
 import { assets } from "../assets/frontend_assets/assets";
 import { FaShoppingCart } from "react-icons/fa";
 import RelatedProduct from "../components/RelatedProduct/RelatedProduct";
-import { useCartStore } from "../Hooks/cartStore";
+
 import ProductWishlistButton from "../components/ProductWishlistButton/ProductWishlistButton";
 
 export default function DetailsPage() {

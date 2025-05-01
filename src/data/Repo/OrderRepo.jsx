@@ -1,69 +1,6 @@
-// import { addOrderItem, createOrders } from "../apis/Orders/order_index";
-// import { getOrderById, getOrderItems, getUserOrders } from "../apis/Orders/user_order";
-
-// export const orderRepo = {
-//   placeOrder: async (
-//     cartItems,
-//     userId,
-//     token,
-//     // formData,
-//     // paymentMethod,
-//     // addressInformation
-//   ) => {
-//     console.log("Starting order placement:", {
-//       userId,
-//       cartItems: cartItems.length,
-//       hasToken: !!token,
-//     });
-
-//     try {
-//       const orderData = await createOrders(userId, token);
-
-//       if (!orderData) {
-//         throw new Error("Failed to get order ID from server");
-//       }
-
-//       const orderId = orderData.id;
-//       console.log("Order created with ID:", orderId);
-
-//       for (const item of cartItems) {
-//         console.log("Processing item:", item);
-//         await addOrderItem({
-//           orderId: orderId,
-//           productId: item.documentId,
-//           quantity: item.quantity,
-//           size: item.size,
-//           userId: userId,
-//           token: token,
-//         });
-//       }
-//       console.log("Order placed successfully!");
-//       return { success: true, orderId };
-//     } catch (error) {
-//       console.error("Error in placeOrder:", error);
-//       throw error;
-//     }
-//   },
-
-//   getOrder: async (userId, token) => {
-//     return await getUserOrders(userId, token);
-//   },
-
-//   getOrderItems: async (orderId, token) => {
-//     return await getOrderItems(orderId, token);
-//   } ,
-
-//   getOrderDetailsById: async (orderId, token) => {
-//     return await getOrderById(orderId, token);
-//   }
-// };
-// last update before claudi
-////////////////////////////////////////////////////////////
-
 import {
   addOrderItem,
   createOrders,
-  // updateOrderTotal,
 } from "../apis/Orders/order_index";
 import {
   getOrderById,
@@ -86,7 +23,6 @@ export const orderRepo = {
     });
 
     try {
-      // Create the order with more details
       const orderData = await createOrders(
         userId,
         token,
@@ -100,13 +36,9 @@ export const orderRepo = {
       }
 
       const orderId = orderData.id;
-      console.log("Order created with ID:", orderId);
-
-      // let totalPrice = 0;
-
-      // Add items to the order
+      // console.log("Order created with ID:", orderId);
       for (const item of cartItems) {
-        console.log("Processing item:", item);
+        // console.log("Processing item:", item);
         await addOrderItem({
           orderId: orderId,
           productId: item.documentId,
@@ -115,18 +47,11 @@ export const orderRepo = {
           userId: userId,
           token: token,
         });
-
-        // Calculate total price
-        // totalPrice += item.price * item.quantity;
       }
-
-      // Update order with total price
-      // await updateOrderTotal(orderId, totalPrice, token);
-
-      console.log("Order placed successfully!");
+      // console.log("Order placed successfully!");
       return { success: true, orderId };
     } catch (error) {
-      console.error("Error in placeOrder:", error);
+      // console.error("Error in placeOrder:", error);
       throw error;
     }
   },

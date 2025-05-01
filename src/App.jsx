@@ -47,7 +47,6 @@ export default function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/place-order" element={<PlaceOrders />} />
           <Route path="/orders" element={<Order />} />
-          {/* <Route path="/orders/:orderId" element={<Order />} /> */}
           <Route path="*" element={<h1>Page Not Found</h1>} />
         </Route>
 

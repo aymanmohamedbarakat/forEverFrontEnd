@@ -1,10 +1,8 @@
+import { getWishlistItem, userWishlist } from "../apis/Wishlists/user_wishlist";
 import {
   addToUserWishlist,
-  // clearAllUserWishlist,
-  getWishlistItem,
   removeFromUserWishlist,
-  userWishlist,
-} from "../apis/wishlist_user";
+} from "../apis/Wishlists/wishlist_index";
 
 export const WishlistRepo = {
   getAllWishlists: async (userId) => {

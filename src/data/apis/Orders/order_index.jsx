@@ -1,27 +1,32 @@
-// /////////////////////////
+// working
+////////////////////////////////////////////////////////////
 // import axios from "axios";
 // import { domain } from "../../../store";
 
-// export const createOrders = async (userId, token) => {
+// export const createOrders = async (
+//   userId,
+//   token,
+//   addressInformation = null,
+//   formData = {},
+//   paymentMethod = "cod"
+// ) => {
 //   try {
 //     console.log("Creating order with params:", { userId, domain });
 
-//     // API call to create an order
+//     // API call to create an order with more details
 //     const res = await axios.post(
 //       `${domain}/api/orders`,
 //       {
 //         data: {
 //           users_permissions_user: userId,
 //           order_status: "pending",
+//           // total: 0, // Will be updated after adding items
 //         },
 //       },
 //       {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //           "Content-Type": "application/json",
-//         },
-//         params: {
-//           populate: "*",
 //         },
 //       }
 //     );
@@ -56,7 +61,7 @@
 //       orderId,
 //       userId,
 //       quantity,
-//       size
+//       size,
 //     });
 
 //     const res = await axios.post(
@@ -69,13 +74,6 @@
 //           quantity: quantity || 1,
 //           size: size || null,
 //         },
-//         // data: {
-//         //   product: { connect: [productId] },
-//         //   order: { connect: [orderId] },
-//         //   users_permissions_user: { connect: [userId] },
-//         //   quantity: quantity || 1,
-//         //   size: size || null,
-//         // },
 //       },
 //       {
 //         headers: {
@@ -98,12 +96,11 @@
 //     );
 //   }
 // };
-// last update before claudi
-////////////////////////////////////////////////////////////
+////////////////////////
+///////////////////////////////////////////
 
 import axios from "axios";
 import { domain } from "../../../store";
-
 export const createOrders = async (
   userId,
   token,
@@ -169,7 +166,8 @@ export const addOrderItem = async ({
       `${domain}/api/order-items`,
       {
         data: {
-          product: productId,
+          products: productId,
+          // products: productsArray,
           order: orderId,
           users_permissions_user: userId,
           quantity: quantity || 1,
@@ -198,32 +196,43 @@ export const addOrderItem = async ({
   }
 };
 
-// Add the missing updateOrderTotal function
-// export const updateOrderTotal = async (orderId, total, token) => {
-//   try {
-//     console.log("Updating order total:", { orderId, total });
+export const updateOrderWithItems = async (orderId, orderItemIds, token) => {
+  try {
+    console.log("Updating order with order items:", {
+      orderId,
+      orderItemIds,
+    });
 
-//     const res = await axios.put(
-//       `${domain}/api/orders/${orderId}`,
-//       {
-//         data: {
-//           total: total,
-//         },
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-//     console.log("Order total updated:", res.data);
-//     return res.data;
-//   } catch (error) {
-//     console.error("Error updating order total:", error);
-//     if (error.response) {
-//       console.error("Response data:", JSON.stringify(error.response.data));
-//     }
-//     throw error;
-//   }
-// };
+    const itemsArray = Array.isArray(orderItemIds)
+      ? orderItemIds
+      : [orderItemIds];
+
+    const res = await axios.put(
+      `${domain}/api/orders/${orderId}`,
+      {
+        data: {
+          order_items: itemsArray,
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("Order updated with items:", res.data);
+    return res.data;
+  } catch (error) {
+    console.error(
+      "Error updating order with items:",
+      error.response?.data || error.message
+    );
+    throw new Error(
+      error.response?.data?.error?.message ||
+        error.message ||
+        "Failed to update order with items"
+    );
+  }
+};

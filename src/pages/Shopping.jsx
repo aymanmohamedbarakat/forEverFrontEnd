@@ -4,8 +4,7 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import Title from "../components/Title/Title";
 import ProductItem from "../components/ProductItem/ProductItem";
 import { ShopRepo } from "../data/Repo/ShopRepo";
-import { domain } from "../store";
-import { useSearchStore } from "../Hooks/uiStore";
+import { domain, useSearchStore } from "../store";
 
 export default function Shopping() {
   const [showFilters, setShowFilters] = useState(true);
