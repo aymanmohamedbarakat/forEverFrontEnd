@@ -26,8 +26,8 @@ export default function RelatedProduct({ category, sub_category }) {
   }, [category, sub_category]);
 
   return (
-    <div className="my-24">
-      <div className="text-center text-3xl py-2">
+    <div className="mt-20">
+      <div className="text-center text-xl md:text-3xl mb-3">
         <Title text1={"RELATED"} text2={"PRODUCTS"} />
       </div>
 

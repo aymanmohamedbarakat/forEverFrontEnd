@@ -40,12 +40,6 @@ export const useCheckOutStore = create((set, get) => ({
         throw new Error("Address information incomplete");
       }
       const addressInformation = `${formData.street}, ${formData.city}, ${formData.state}, ${formData.zipCode}, ${formData.country}`;
-      // console.log(
-      //   "Submitting order with data:",
-      //   addressInformation,
-      //   "and method:",
-      //   method
-      // );
 
       const { currentUser, authToken } = useAuthStore.getState();
       const { cartItems, clearCart } = useCartStore.getState();
@@ -57,28 +51,35 @@ export const useCheckOutStore = create((set, get) => ({
         });
         return false;
       }
-      // console.log("Cart items for order:", cartItems);
 
       if (!currentUser) {
         toast.error("Please log in to place an order");
         throw new Error("User not authenticated");
       }
 
+      const total = cartItems.reduce(
+        (sum, item) => sum + parseFloat(item.price) * parseInt(item.quantity),
+        0
+      );
+
       const result = await orderRepo.placeOrder(
         cartItems,
         currentUser.id,
         authToken,
+        total,
         formData,
         method,
         addressInformation
       );
-      // console.log("Order placement result:", result);
 
       if (result.success) {
         clearCart();
         set({ formData: {}, method: "cod" });
         toast.success(
-          "Order placed successfully! Thank you for your purchase."
+          "Order placed successfully! Thank you for your purchase.",
+          {
+            autoClose: 1300,
+          }
         );
         return true;
       } else {
@@ -86,7 +87,6 @@ export const useCheckOutStore = create((set, get) => ({
         return false;
       }
     } catch (error) {
-      // console.error("❌ handlePlaceOrder error:", error);
       toast.error(error.message || "Failed to place order");
       return false;
     }

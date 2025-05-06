@@ -10,7 +10,7 @@ export const userLogin = async (values) => {
   }).then((res)=>{
     userInfo = res.data;
   }).catch((err)=>{
-    console.log(err);
+    console.error(err);
   })
   return userInfo ;
 };

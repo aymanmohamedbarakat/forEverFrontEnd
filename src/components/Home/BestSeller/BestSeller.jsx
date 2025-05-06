@@ -16,7 +16,6 @@ export default function BestSeller() {
           (product) => product.bestSeller === true
         );
         setBestSeller(bestSeller.slice(0, 7));
-        console.log("API Response:", res.data);
       })
       .catch((err) => console.error("Error fetching bestsellers:", err));
   }, []);

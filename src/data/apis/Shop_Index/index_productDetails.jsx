@@ -9,7 +9,6 @@ export const indexProductDetails = async (id) => {
     }
   }).then((res) => {
     final = res.data.data;
-    // console.log(final);
   });
   return final;
 };

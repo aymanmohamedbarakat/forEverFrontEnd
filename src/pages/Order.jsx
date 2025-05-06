@@ -11,7 +11,6 @@ export default function Order() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Format date function - explicitly set to format like "May 1, 2025"
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -21,7 +20,6 @@ export default function Order() {
     });
   };
 
-  // Get status info with color and text
   const getStatusInfo = (status) => {
     const statusMap = {
       pending: { color: "bg-yellow-400", text: "Pending" },
@@ -44,12 +42,7 @@ export default function Order() {
         }
 
         const response = await orderRepo.getOrder(currentUser.id, authToken);
-        // The response could be the array directly or nested inside a data property
-        const orderData = Array.isArray(response)
-          ? response
-          : response.data || [];
-        setOrders(orderData);
-        console.log("API Response:", response);
+        setOrders(response);
         setLoading(false);
       } catch (err) {
         console.error("Failed to fetch orders:", err);
@@ -59,20 +52,6 @@ export default function Order() {
     }
     getOrders();
   }, [currentUser, authToken]);
-
-  const calculateOrderTotal = (orderItems) => {
-    if (!orderItems || !Array.isArray(orderItems) || orderItems.length === 0) {
-      return 0;
-    }
-    return orderItems.reduce((total, item) => {
-      const price =
-        item.products && item.products.length > 0
-          ? item.products[0].price || 0
-          : 0;
-      const quantity = item.quantity || 1;
-      return total + price * quantity;
-    }, 0);
-  };
 
   if (loading)
     return <div className="text-center py-20">Loading orders...</div>;
@@ -106,10 +85,6 @@ export default function Order() {
       <div className="space-y-6 mt-4">
         {orders.map((order, index) => {
           const statusInfo = getStatusInfo(order.order_status);
-          // Calculate order total based on items if available
-          const total = order.total
-            ? order.total
-            : calculateOrderTotal(order.order_items);
           return (
             <div
               key={order.id || index}
@@ -176,7 +151,7 @@ export default function Order() {
                             Quantity: {item.quantity || 1}
                           </p>
                           <p className="px-2 sm:px-3 sm:py-1 border bg-slate-50">
-                            Size: {item.size || "M"}
+                            Size: {item.size || "N/A"}
                           </p>
                         </div>
                       </div>
@@ -188,7 +163,7 @@ export default function Order() {
               <div className="flex justify-between items-center border-t border-gray-200 bg-gray-50 py-4 px-6">
                 <div>
                   <p className="text-sm text-gray-600 sm:text-base font-medium">
-                    Total: {currency} {parseFloat(total).toFixed(2)}
+                    Total: {currency} {order.total || 0}
                   </p>
                   <p className="text-sm text-gray-500">
                     {order.order_items ? order.order_items.length : 0} item

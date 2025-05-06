@@ -38,11 +38,9 @@ export default function PlaceOrders() {
   const onSubmitOrder = async (values) => {
     try {
       setFormData(values);
-      console.log("Submitting order with data:", values, "and method:", method);
       const success = await handlePlaceOrder();
 
       if (success) {
-        toast.success("Order placed successfully!");
         navigate("/orders");
       } else {
         toast.error("Failed to place order. Try again.");
@@ -58,18 +56,13 @@ export default function PlaceOrders() {
 
   useEffect(() => {
     if (isAuthenticated && currentUser) {
-      const nameParts = (currentUser?.name || "").split(" ");
+      const nameParts = (currentUser?.username || "").split(" ");
       const firstName = nameParts[0] || "";
       const lastName = nameParts.slice(1).join(" ") || "";
       const email = currentUser.email || "";
       const phone = currentUser.phone || "";
 
-      if (
-        formData.firstName !== firstName ||
-        formData.lastName !== lastName ||
-        formData.email !== email ||
-        formData.phone !== phone
-      ) {
+
         const preFilledData = {
           ...formData,
           firstName,
@@ -83,7 +76,7 @@ export default function PlaceOrders() {
           country: formData.country || "",
         };
         setFormData(preFilledData);
-      }
+      
     }
   }, [currentUser, isAuthenticated]);
 

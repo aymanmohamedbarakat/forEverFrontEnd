@@ -12,7 +12,6 @@ export const userToken = async (token) => {
     })
     .then((res) => {
       userInfo = res.data;
-      console.log(res.data);
     })
     .catch((err) => {
       console.error("Token validation error:", err);

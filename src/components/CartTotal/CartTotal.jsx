@@ -11,7 +11,6 @@ export default function CartTotal() {
 
   useEffect(() => {
     ShopRepo.index_productItems().then((res) => {
-      console.log(res.data);
       setProducts(res.data);
     });
   }, []);

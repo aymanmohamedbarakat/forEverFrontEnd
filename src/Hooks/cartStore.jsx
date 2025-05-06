@@ -9,8 +9,7 @@ try {
 export const useCartStore = create((set, get) => ({
   cartItems: savedCart,
 
-  addToCart: (itemId, size) => {
-    if (!size) {
+  addToCart: (itemId, size , price) => {
       if (!size) {
         toast.error("Please select a size", {
           position: "top-right",
@@ -18,7 +17,7 @@ export const useCartStore = create((set, get) => ({
         });
         return;
       }
-    }
+
 
     const cart = [...get().cartItems];
     const existingItem = cart.findIndex(
@@ -32,7 +31,7 @@ export const useCartStore = create((set, get) => ({
         autoClose: 1200,
       });
     } else {
-      cart.push({ documentId: itemId, size, quantity: 1 });
+      cart.push({ documentId: itemId, size, quantity: 1, price });
       toast.success("Item added to cart", {
         position: "top-right",
         autoClose: 1200,
@@ -77,9 +76,9 @@ export const useCartStore = create((set, get) => ({
       const product = products.find(
         (productItem) => productItem.documentId === documentId
       );
-      if (product) {
+      if (product && product.price) {
         total += product.price * quantity;
-      }
+      } 
     });
     return total;
   },

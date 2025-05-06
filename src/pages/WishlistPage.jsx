@@ -35,29 +35,9 @@ export default function WishlistPage() {
   }, [currentUser, getWishlists, isAuthenticated, navigate]);
 
   const handleRemoveItem = async (wishlistItemId) => {
-    console.log("Removing item with ID:", wishlistItemId);
     await removeFromWishlist(wishlistItemId);
   };
-
-  // const handleClearWishlist = async () => {
-  //   if (
-  //     window.confirm("Are you sure you want to clear your entire wishlist?")
-  //   ) {
-  //     setIsClearingWishlist(true);
-
-  //     if (currentUser?.id) {
-  //       await clearWishlists(currentUser.id);
-
-  //       // Force refresh the wishlist to ensure it's truly empty
-  //       await getWishlists(currentUser.id);
-  //     }
-
-  //     setIsClearingWishlist(false);
-  //   }
-  // };
-
   const navigateToProduct = (productId) => {
-    // Fix: Navigate to correct product path
     navigate(`/products/${productId}`);
   };
 
@@ -80,24 +60,6 @@ export default function WishlistPage() {
         <div className="border-t border-gray-300 pt-8">
           <div className="flex justify-between items-center mb-6">
             <Title text1={"YOUR"} text2={"WISHLIST"} />
-
-            {/* {!isWishlistEmpty && (
-              <button
-                onClick={handleClearWishlist}
-                disabled={isClearingWishlist}
-                className={`flex items-center ${
-                  isClearingWishlist
-                    ? "text-gray-400"
-                    : "text-gray-500 hover:text-red-500"
-                } transition-colors text-sm`}
-              >
-                <RefreshCcw
-                  size={16}
-                  className={`mr-1 ${isClearingWishlist ? "animate-spin" : ""}`}
-                />
-                {isClearingWishlist ? "Clearing..." : "Clear Wishlist"}
-              </button>
-            )} */}
           </div>
 
           {isWishlistEmpty ? (

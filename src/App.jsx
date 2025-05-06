@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import UserLayout from "./Layout/UserLayout";
 import HomePage from "./pages/HomePage";
-import Shopping from "./pages/Shopping";
 import DetailsPage from "./pages/DetailsPage";
 import Cart from "./pages/Cart";
 import PlaceOrders from "./pages/PlaceOrders";
@@ -16,6 +15,7 @@ import Order from "./pages/Order";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
+import ShopMain from "./pages/ShopMain";
 export default function App() {
   const { validateToken } = useAuthStore();
 
@@ -40,7 +40,7 @@ export default function App() {
             </AuthGuard>
           }
         >
-          <Route path="/shopping" element={<Shopping />} />
+          <Route path="/shopping" element={<ShopMain />} />
           <Route path="products/:productId" element={<DetailsPage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/wishlist" element={<WishlistPage />} />

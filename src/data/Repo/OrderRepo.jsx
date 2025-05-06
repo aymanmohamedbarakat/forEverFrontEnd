@@ -1,67 +1,78 @@
 import {
   addOrderItem,
   createOrders,
+  updateOrderWithItems,
 } from "../apis/Orders/order_index";
-import {
-  getOrderById,
-  getOrderItems,
-  getUserOrders,
-} from "../apis/Orders/user_order";
+import { getOrderById, getUserOrders } from "../apis/Orders/user_order";
+
 export const orderRepo = {
-  placeOrder: async (
-    cartItems,
-    userId,
-    token,
-    formData,
-    paymentMethod,
-    addressInformation
-  ) => {
-    console.log("Starting order placement:", {
-      userId,
-      cartItems: cartItems.length,
-      hasToken: !!token,
-    });
+  placeOrder: async (cartItems, userId, token) => {
 
     try {
-      const orderData = await createOrders(
-        userId,
-        token,
-        addressInformation,
-        formData,
-        paymentMethod
+      const total = parseFloat(
+        cartItems
+          .reduce((sum, item) => {
+          return  sum + item.price * item.quantity;
+          }, 0)
       );
+
+      if (isNaN(total) || total <= 0) {
+        throw new Error("Invalid total value calculated");
+      }
+
+      const orderData = await createOrders(userId, token, total);
 
       if (!orderData) {
         throw new Error("Failed to get order ID from server");
       }
 
-      const orderId = orderData.id;
-      // console.log("Order created with ID:", orderId);
+      const orderId = orderData.documentId;
+      const orderItemIds = [];
+
       for (const item of cartItems) {
-        // console.log("Processing item:", item);
-        await addOrderItem({
-          orderId: orderId,
-          productId: item.documentId,
-          quantity: item.quantity,
-          size: item.size,
-          userId: userId,
-          token: token,
-        });
+        try {
+          const result = await addOrderItem({
+            orderId: orderId,
+            productId: item.documentId,
+            quantity: item.quantity,
+            price: item.price, 
+            size: item.size,
+            userId: userId,
+            token: token,
+          });
+
+          if (result && result.data && result.data.documentId) {
+            orderItemIds.push(result.data.documentId);
+          }
+        } catch (itemError) {
+          console.error(
+            `Error adding item ${item.documentId} to order:`,
+            itemError
+          );
+        }
       }
-      // console.log("Order placed successfully!");
-      return { success: true, orderId };
+
+      if (orderItemIds.length === 0) {
+        return {
+          success: true,
+          orderId,
+          warning: "No items were added to the order",
+        };
+      }
+
+      return { success: true, orderId, total };
     } catch (error) {
-      // console.error("Error in placeOrder:", error);
+      console.error("Error in placeOrder:", error);
       throw error;
     }
   },
 
-  getOrder: async (userId, token) => {
-    return await getUserOrders(userId, token);
+  updateItems: async (orderId, orderItemIds, token, total) => {
+    return await updateOrderWithItems(orderId, orderItemIds, token, total);
   },
 
-  getOrderItems: async (orderId, token) => {
-    return await getOrderItems(orderId, token);
+  getOrder: async (userId, token) => {
+    return await getUserOrders(userId, token);
   },
 
   getOrderDetailsById: async (orderId, token) => {
