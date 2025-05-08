@@ -173,7 +173,7 @@ export default function LoginPage() {
       onSubmit={handleLogin}
     >
       {({ isSubmitting }) => (
-        <Form className="min-h-screen flex flex-col justify-center items-center w-[90%] sm:max-w-96 m-auto gap-4 text-gray-800">
+        <Form className="min-h-screen flex flex-col justify-center items-center w-[90%] sm:max-w-2xl m-auto gap-4 text-gray-800">
           <div className="max-w-md w-full bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="bg-gradient-to-r from-gray-900 to-gray-600 py-6">
               <h2 className="text-center text-3xl font-bold text-white">
