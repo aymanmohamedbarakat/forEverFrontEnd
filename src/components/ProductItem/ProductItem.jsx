@@ -58,7 +58,7 @@ export default function ProductItem({
           </div>
           
           <Link to={`/products/${id}`}>
-            <h3 className="font-medium text-gray-900 group-hover:underline">{name}</h3>
+            <h3 className="font-medium text-gray-900 group-hover:underline line-clamp-2">{name}</h3>
           </Link>
           
           <p className="font-semibold text-gray-900">
