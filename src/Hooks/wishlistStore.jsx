@@ -78,7 +78,8 @@ export const userWishlistStore = create((set, get) => ({
             (item) => item.documentId !== wishlistItemDocumentId
           ),
         }));
-        toast.success("Removed from wishlist", {
+        // search for be remove succus but as red 
+        toast.error("Removed from wishlist", {
           autoClose: 1200,
         });
         return true;
