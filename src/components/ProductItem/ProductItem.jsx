@@ -62,7 +62,7 @@ export default function ProductItem({
           </Link>
           
           <p className="font-semibold text-gray-900">
-            ${typeof price === "number" ? price.toLocaleString() : price}
+            {currency}{typeof price === "number" ? price.toLocaleString() : price}
           </p>
         </div>
       </div>
