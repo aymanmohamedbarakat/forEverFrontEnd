@@ -8,8 +8,9 @@ import {
   FaTimes,
   FaUser,
 } from "react-icons/fa";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore, useLinks, userWishlistStore, useSideHeader } from "../../store";
+import { assets } from "../../assets/frontend_assets/assets";
 
 export default function SideBar() {
   const { Links } = useLinks();
@@ -41,7 +42,9 @@ export default function SideBar() {
       <div className="w-full bg-white shadow-xl flex flex-col h-full">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold">Menu</h2>
+                <Link to="/">
+        <img src={assets.logo} className="w-36" alt="Logo" />
+      </Link>
           <button
             onClick={closeSideHeader}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -119,9 +122,9 @@ export default function SideBar() {
 
         <div className="flex-grow overflow-y-auto">
           <div className="py-2">
-            <h3 className="px-4 py-2 text-sm font-medium text-gray-500">
+            {/* <h3 className="px-4 py-2 text-sm font-medium text-gray-500">
               Navigation
-            </h3>
+            </h3> */}
             {links.map((link, index) => (
               <NavLink
                 to={link.url}

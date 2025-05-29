@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { domain, useAuthStore, userWishlistStore } from "../store";
 import Title from "../components/Title/Title";
 import { ArrowRight, Eye, HeartOff } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function WishlistPage() {
   const navigate = useNavigate();
@@ -56,8 +57,8 @@ export default function WishlistPage() {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <div className="border-t border-gray-300 pt-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 border-t  border-gray-200">
+        <div className="pt-8">
           <div className="flex justify-between items-center mb-6">
             <Title text1={"YOUR"} text2={"WISHLIST"} />
           </div>

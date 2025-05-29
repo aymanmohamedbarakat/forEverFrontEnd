@@ -79,7 +79,7 @@ export const userWishlistStore = create((set, get) => ({
           ),
         }));
         // search for be remove succus but as red 
-        toast.error("Removed from wishlist", {
+        toast.warn("Removed from wishlist", {
           autoClose: 1200,
         });
         return true;

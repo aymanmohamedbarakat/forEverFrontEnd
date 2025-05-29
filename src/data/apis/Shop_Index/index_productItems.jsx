@@ -5,7 +5,7 @@ import { domain } from "../../../store";
 
 export const indexProductItems = async (
   pageNo = 1,
-  pageSize = 15,
+  pageSize = 55,
   filters = {}
 ) => {
   try {

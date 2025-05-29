@@ -55,7 +55,7 @@ export const useShopStore = create((set, get) => ({
   // Pagination
   activePage: 1,
   productPerPage: 8,
-//////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
   // Setters
 
   // Setters Product
@@ -119,62 +119,63 @@ export const useShopStore = create((set, get) => ({
       });
     }
   },
-//////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
 
- // GET data
- fetchInitialData: async () => {
-  set({ isLoading: true });
-  try {
-    const [categories, subCategories, productsResponse] = await Promise.all([
-      ShopRepo.categories_index(),
-      ShopRepo.subCategories_index(),
-      ShopRepo.index_productItems(1, 100, {}),
-    ]);
-    
-    set({
-      categories: categories || [],
-      subCategories: subCategories || [],
-      allProducts: productsResponse?.data || [],
-      displayProducts: productsResponse?.data || [],
-      productsTotal: productsResponse?.total || productsResponse?.data?.length || 0,
-    });
-  } catch (error) {
-    console.error("Error loading shop data:", error);
-  } finally {
-    set({ isLoading: false });
-  }
-},
+  // GET data
+  fetchInitialData: async () => {
+    set({ isLoading: true });
+    try {
+      const [categories, subCategories, productsResponse] = await Promise.all([
+        ShopRepo.categories_index(),
+        ShopRepo.subCategories_index(),
+        ShopRepo.index_productItems(1, 100, {}),
+      ]);
+
+      set({
+        categories: categories || [],
+        subCategories: subCategories || [],
+        allProducts: productsResponse?.data || [],
+        displayProducts: productsResponse?.data || [],
+        productsTotal:
+          productsResponse?.total || productsResponse?.data?.length || 0,
+      });
+    } catch (error) {
+      console.error("Error loading shop data:", error);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 
   // Apply filters and sorting
   applyFiltersAndSort: () => {
     const { allProducts, filterProducts, sortType } = get();
     const { search, showSearch } = useSearchStore.getState();
-    
+
     if (!allProducts.length) return;
-    
+
     let filtered = [...allProducts];
-    
+
     // Apply search filter if active
     if (showSearch && search) {
       filtered = filtered.filter((p) =>
         p.name.toLowerCase().includes(search.toLowerCase())
       );
     }
-    
+
     // Apply category filters
     if (filterProducts.categories.length > 0) {
       filtered = filtered.filter((p) =>
         filterProducts.categories.includes(p.category.documentId)
       );
     }
-    
+
     // Apply subcategory filters
     if (filterProducts.subCategories.length > 0) {
       filtered = filtered.filter((p) =>
         filterProducts.subCategories.includes(p.sub_category.documentId)
       );
     }
-    
+
     // Apply sorting
     switch (sortType) {
       case "low-high":
@@ -186,14 +187,11 @@ export const useShopStore = create((set, get) => ({
       default:
         break;
     }
-    
+
     set({
       displayProducts: filtered,
       productsTotal: filtered.length,
-      activePage: get().activePage !== 1 ? 1 : get().activePage
+      activePage: get().activePage !== 1 ? 1 : get().activePage,
     });
-  }
-
-
-
+  },
 }));

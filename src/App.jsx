@@ -23,11 +23,13 @@ export default function App() {
     validateToken();
   }, [validateToken]);
   return (
-    <div className="App px-4 sm:px-6 md:px-12 lg:px-20 xl:px-28 bg-white text-black">
-      <ToastContainer />
+    <div className="App container mx-auto px-4  bg-white text-black">
+      <ToastContainer className="mt-15"/>
       <Routes>
         <Route path="/" element={<UserLayout />}>
           <Route index element={<HomePage />} />
+           <Route path="/shopping" element={<ShopMain />} />
+           <Route path="products/:productId" element={<DetailsPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
         </Route>
@@ -40,8 +42,6 @@ export default function App() {
             </AuthGuard>
           }
         >
-          <Route path="/shopping" element={<ShopMain />} />
-          <Route path="products/:productId" element={<DetailsPage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/profile" element={<Profile />} />

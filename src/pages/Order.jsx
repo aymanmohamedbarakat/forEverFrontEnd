@@ -59,7 +59,7 @@ export default function Order() {
 
   if (orders.length === 0) {
     return (
-      <div className="border-t pt-16">
+      <div className="border-t  border-gray-200 pt-16">
         <div className="text-xl sm:text-2xl my-3">
           <Title text1={"MY"} text2={"ORDERS"} />
         </div>

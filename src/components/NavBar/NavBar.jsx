@@ -22,7 +22,7 @@ export default function NavBar() {
   const { wishlist, getWishlists } = userWishlistStore();
   const { openSearch } = useSearchStore();
   const [isOpen, setIsOpen] = useState(false);
-
+ const [isNewUser, setIsNewUser] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -41,6 +41,14 @@ export default function NavBar() {
       getWishlists(currentUser.id);
     }
   }, [isAuthenticated, currentUser, getWishlists]);
+
+  useEffect(()=>{
+        if (currentUser && currentUser.createdAt === currentUser.updatedAt) {
+      setIsNewUser(true);
+    } else {
+      setIsNewUser(false);
+    }
+  },[currentUser])
 
   return (
     <div className="flex items-center justify-between py-5 gap-5 font-medium">
@@ -129,7 +137,7 @@ export default function NavBar() {
 
         <div className="relative">
           <div className="cursor-pointer" onClick={() => setIsOpen(true)}>
-            <img src={assets.profile_icon} alt="Profile" className="w-4" />
+            <img src={assets.profile_icon} alt="Profile" className="w-4 hidden md:block" />
           </div>
 
           <div
@@ -139,7 +147,7 @@ export default function NavBar() {
           >
             {/* Menu Header */}
             <div className="flex items-center justify-between px-4 py-5 border-b">
-              <h3 className="font-medium text-lg">My Account</h3>
+             {currentUser ? <h3 className="font-medium text-lg">Hello, {currentUser?.username}</h3> : ""} 
               <button
                 onClick={() => setIsOpen(false)}
                 className="text-gray-500 hover:text-gray-800"
@@ -153,10 +161,10 @@ export default function NavBar() {
               {isAuthenticated ? (
                 <div className="flex flex-col gap-3">
                   <div className="mb-3">
-                    <p className="font-medium text-black">
-                      Hello, {currentUser.username}
+                    <p className="font-medium text-gray-500">
+                    {isNewUser ? "Nice to meet you!" : "Welcome back!"}
                     </p>
-                    <p className="text-sm text-gray-500">Welcome back!</p>
+
                   </div>
 
                   <button
@@ -164,13 +172,6 @@ export default function NavBar() {
                     onClick={() => navigateTo("/profile")}
                   >
                     My Profile
-                  </button>
-
-                  <button
-                    className="w-full text-left py-2 px-3 rounded hover:bg-gray-100 transition-colors"
-                    onClick={() => navigateTo("/wishlist")}
-                  >
-                    My Wishlist
                   </button>
 
                   <button
@@ -227,7 +228,7 @@ export default function NavBar() {
 
         <Link
           to={isAuthenticated ? "/wishlist" : "/login"}
-          className="relative"
+          className="relative hidden md:block"
         >
           <CgHeart className="text-lg" />
           {wishlist.length > 0 && (
@@ -237,8 +238,9 @@ export default function NavBar() {
           )}
         </Link>
 
-        <Link to={isAuthenticated ? "/cart" : "/login"} className="relative">
-          <CgShoppingBag className="text-lg w-5 min-w-5 cursor-pointer" />
+        {/* <Link to={isAuthenticated ? "/cart" : "/login"} className="relative"> */}
+        <Link to="/cart"  className="relative">
+          <CgShoppingBag className="text-lg w-5 min-w-5 cursor-pointer " />
           {isAuthenticated && getCartCount() > 0 && (
             <p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]">
               {getCartCount()}

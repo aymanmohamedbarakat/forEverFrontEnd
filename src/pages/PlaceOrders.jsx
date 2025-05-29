@@ -68,12 +68,12 @@ export default function PlaceOrders() {
           firstName,
           lastName,
           email,
-          phone,
           street: formData.street || "",
           city: formData.city || "",
           state: formData.state || "",
           zipCode: formData.zipCode || "",
           country: formData.country || "",
+          phone,
         };
         setFormData(preFilledData);
       
@@ -89,9 +89,9 @@ export default function PlaceOrders() {
         onSubmit={onSubmitOrder}
       >
         {({ isSubmitting }) => (
-          <Form className="flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t border-gray-300">
+          <Form className="flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t  border-gray-200">
             {/* ------------------------- Left Side ------------------------ */}
-            <div className="flex flex-col gap-4 w-full sm:max-w-[480px]">
+            <div className="flex flex-col gap-4 w-full sm:max-w-[520px]">
               <div className="text-xl sm:text-2xl my-3">
                 <Title text1={"DELIVERY"} text2={"INFORMATION"} />
               </div>
@@ -216,7 +216,7 @@ export default function PlaceOrders() {
               </div>
               <div className="mt-12">
                 <Title text1={"PAYMENT"} text2={"METHOD"} />
-                <div className="flex flex-col lg:flex-row gap-2">
+                <div className="flex flex-col xl:flex-row gap-2">
                   {[
                     {
                       id: "Stripe",
@@ -242,7 +242,7 @@ export default function PlaceOrders() {
                       id: "cod",
                       label: (
                         <p className="text-gray-500 text-sm font-medium mx-4">
-                          CASH ON DELIVERY
+                          Cash Payment
                         </p>
                       ),
                     },
@@ -265,7 +265,7 @@ export default function PlaceOrders() {
                 <div className="w-full text-end mt-8">
                   <button
                     type="submit"
-                    className="bg-black text-white px-16 py-3 text-sm hover:bg-gray-800 transition-colors"
+                    className="bg-black w-full text-white btn btn-soft text-sm hover:bg-gray-800 transition-colors"
                   >
                     {isSubmitting ? "PROCESSING..." : "PLACE ORDER"}
                   </button>

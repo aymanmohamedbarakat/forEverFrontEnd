@@ -28,7 +28,7 @@ export default function ShopMain() {
     useSearchStore().showSearch,
   ]);
   return (
-    <div className="bg-white">
+    <div className="bg-white border-t  border-gray-200">
         <ShopHeader />
         <div className="container mx-auto px-4 pb-12 pt-6">
         <div className="flex flex-col gap-6 lg:flex-row">

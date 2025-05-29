@@ -200,6 +200,7 @@ import {
   RefreshCcw,
   ShoppingBag,
   Trash2,
+  X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ShopRepo } from "../data/Repo/ShopRepo";
@@ -249,7 +250,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-2 lg:px-8 py-12 border-t  border-gray-200">
       {/* Header */}
       <button
         onClick={() => navigate("/shopping")}
@@ -260,16 +261,14 @@ export default function Cart() {
       </button>
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
-          <div className="text-2xl">
-            <Title text1={"SHOPPING"} text2={"CART"} />
-          </div>
+          <Title text1={"SHOPPING"} text2={"CART"} />
 
           {!isCartEmpty && (
             <button
               onClick={clearCart}
-              className="ml-6 flex items-center text-gray-500 hover:text-red-500 transition-colors"
+              className="ml-3 md:ml-5 flex items-center text-xs text-gray-500 hover:text-red-500 transition-colors"
             >
-              <RefreshCcw size={14} className="mr-1" />
+              <RefreshCcw size={16} className="mr-1 md:mr-1" />
               Clear Cart
             </button>
           )}
@@ -329,6 +328,14 @@ export default function Cart() {
                             src={imageUrl}
                             alt={product.name}
                           />
+                          <button
+                            onClick={() =>
+                              removeFromCart(item.documentId, item.size)
+                            }
+                            className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md hover:bg-gray-100 md:hidden"
+                          >
+                            <X size={14} />
+                          </button>
                         </div>
 
                         <div>
@@ -339,15 +346,6 @@ export default function Cart() {
                             {currency}
                             {product.price.toFixed(2)}
                           </p>
-                          <button
-                            onClick={() =>
-                              removeFromCart(item.documentId, item.size)
-                            }
-                            className="mt-2 text-sm text-red-500 flex md:hidden items-center hover:text-red-600"
-                          >
-                            <Trash2 size={14} className="mr-1" />
-                            Remove
-                          </button>
                         </div>
                       </div>
 
@@ -401,23 +399,27 @@ export default function Cart() {
                       </div>
 
                       {/* Total */}
-                      <div className="flex justify-between items-center md:justify-end">
-                        <div className="md:hidden text-gray-500 text-sm">
+                      <div className="flex items-center justify-between w-full md:justify-end gap-2">
+                        {/* Mobile label - only visible on small screens */}
+                        <span className="text-sm text-gray-500 md:hidden">
                           Total:
-                        </div>
-                        <div className="font-medium">
-                          {currency}
-                          {itemTotal.toFixed(2)}
-                        </div>
+                        </span>
                         <button
                           onClick={() =>
                             removeFromCart(item.documentId, item.size)
                           }
-                          className="text-gray-400 hidden md:flex md:items-center hover:text-red-500 ml-4 transition-colors"
+                          className="hidden md:flex mr-3 items-center text-gray-400 hover:text-red-500 transition-colors"
                           aria-label="Remove item"
                         >
                           <Trash2 size={16} />
                         </button>
+                        {/* Price display */}
+                        <div className="font-medium">
+                          {currency}
+                          {itemTotal.toFixed(2)}
+                        </div>
+
+                        {/* Remove button - hidden on mobile, visible on md screens and up */}
                       </div>
                     </div>
                   );
@@ -434,7 +436,7 @@ export default function Cart() {
                 onClick={() => navigate("/place-order")}
                 className="w-full bg-black text-white mt-6 px-6 py-3 rounded hover:bg-gray-800 transition-colors flex items-center justify-center"
               >
-                Proceed to Checkout
+                PROCEED TO CHECKOUT
                 <ArrowRight size={16} className="ml-2" />
               </button>
 

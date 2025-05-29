@@ -1,6 +1,7 @@
 import React from "react";
-import { domain, useShopStore } from "../../store";
+import { domain, useSearchStore, useShopStore } from "../../store";
 import ProductItem from "../ProductItem/ProductItem";
+import { SlidersHorizontal } from "lucide-react";
 
 export default function ProductList() {
   const {

@@ -61,30 +61,28 @@
 //           {/* ----------------- Product Data ----------------- */}
 //           <div className="flex flex-col sm:flex-row gap-12 sm:gap-12">
 //             {/* ----------------- Product Image ----------------- */}
-//             <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
-//               <div className="flex sm:flex-col overflow-x-auto justify-between sm:justify-normal sm:w-[18.7%] w-full">
-//                 {productData.image.map((el, index) => (
-//                   <img
-//                     key={index}
-//                     src={domain + el.url}
-//                     className={`w-[24%] sm:w-full sm:mb-3 shrink-0 cursor-pointer ${
-//                       el.documentId === imageProduct?.documentId
-//                         ? "border border-gray-500"
-//                         : ""
-//                     }`}
-//                     alt=""
-//                     onClick={() => setImageProduct(el)}
-//                   />
-//                 ))}
-//               </div>
-//               <div className="w-full sm:w-4/5">
-//                 <img
-//                   src={domain + imageProduct?.url}
-//                   className="w-full h-auto"
-//                   alt=""
-//                 />
-//               </div>
-//             </div>
+{
+  /* <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
+  <div className="flex sm:flex-col overflow-x-auto justify-between sm:justify-normal sm:w-[18.7%] w-full">
+    {productData.image.map((el, index) => (
+      <img
+        key={index}
+        src={domain + el.url}
+        className={`w-[24%] sm:w-full sm:mb-3 shrink-0 cursor-pointer ${
+          el.documentId === imageProduct?.documentId
+            ? "border border-gray-500"
+            : ""
+        }`}
+        alt=""
+        onClick={() => setImageProduct(el)}
+      />
+    ))}
+  </div>
+  <div className="w-full sm:w-4/5">
+    <img src={domain + imageProduct?.url} className="w-full h-auto" alt="" />
+  </div>
+</div>; */
+}
 //             {/* ----------------- Product Details ----------------- */}
 //             <div className="flex-1">
 //               <h1 className="font-medium text-2xl mt-2">{productData.name}</h1>
@@ -123,13 +121,13 @@
 //                 <p className="text-sm text-gray-500">Delivery in 3-5 days</p>
 //                 <p className="text-sm text-gray-500">Free Delivery</p>
 //               </div>
-//               <div className="flex flex-wrap gap-4">
-//                 <button onClick={handleAddToCart} className="btn btn-soft">
-//                   <FaShoppingCart className="mr-2" />
-//                   ADD TO CART
-//                 </button>
-//                 <ProductWishlistButton productId={productData.documentId} />
-//               </div>
+// <div className="flex flex-wrap gap-4">
+//   <button onClick={handleAddToCart} className="btn btn-soft">
+//     <FaShoppingCart className="mr-2" />
+//     ADD TO CART
+//   </button>
+//   <ProductWishlistButton productId={productData.documentId} />
+// </div>
 //               <hr className="mt-8 sm:w-4/5 border border-gray-300" />
 //               <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
 //                 <p>100% Original Product.</p>
@@ -183,7 +181,7 @@
 //   );
 // }
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ShopRepo } from "../data/Repo/ShopRepo";
 import { currency, domain, useCartStore } from "../store";
@@ -209,7 +207,14 @@ export default function DetailsPage() {
   const [activeTab, setActiveTab] = useState("description");
 
   // Hooks
-  const { addToCart } = useCartStore();
+  const { addToCart, cartItems } = useCartStore();
+
+  const productInCartCount = cartItems.reduce((count, item) => {
+    if (item.documentId === productId) {
+      return count + item.quantity;
+    }
+    return count;
+  }, 0);
 
   useEffect(() => {
     if (productId) {
@@ -247,7 +252,7 @@ export default function DetailsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="container mx-auto px-4 py-8 max-w-6xl border-t  border-gray-200">
       {/* Breadcrumb & Back Button */}
       <div className="flex items-center mb-6">
         <button
@@ -264,37 +269,28 @@ export default function DetailsPage() {
           {/* Main Product Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
             {/* Product Images Section */}
-            <div className="flex flex-col-reverse md:flex-row gap-4">
-              {/* Thumbnails */}
-              <div className="flex items-center md:flex-col overflow-x-auto gap-3 md:w-24">
+            <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
+              <div className="flex sm:flex-col overflow-x-auto justify-between sm:justify-normal sm:w-[18.7%] w-full">
                 {productData.image.map((el, index) => (
-                  <div
+                  <img
                     key={index}
-                    className={`shrink-0 cursor-pointer border ${
+                    src={domain + el.url}
+                    className={`w-[24%] sm:w-full sm:mb-3 shrink-0 cursor-pointer ${
                       el.documentId === imageProduct?.documentId
-                        ? "border-gray-500"
-                        : "border-gray-200"
-                    } rounded overflow-hidden transition-all hover:shadow-md`}
+                        ? "border border-gray-500"
+                        : ""
+                    }`}
+                    alt=""
                     onClick={() => setImageProduct(el)}
-                  >
-                    <img
-                      src={domain + el.url}
-                      className="w-full h-auto object-contain"
-                      alt={productData.name}
-                    />
-                  </div>
+                  />
                 ))}
               </div>
-
-              {/* Main Image */}
-              <div className="flex-1">
-                <div className="border border-gray-100 rounded-lg shadow-sm overflow-hidden bg-white">
-                  <img
-                    src={domain + imageProduct?.url}
-                    className="w-full h-auto object-contain "
-                    alt={productData.name}
-                  />
-                </div>
+              <div className="w-full sm:w-4/5">
+                <img
+                  src={domain + imageProduct?.url}
+                  className="w-full h-auto"
+                  alt=""
+                />
               </div>
             </div>
 
@@ -368,15 +364,20 @@ export default function DetailsPage() {
               <div className="flex flex-wrap gap-4 mt-8">
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 px-6 rounded-md font-medium flex items-center justify-center transition-colors"
+                  className="btn btn-soft relative"
                 >
                   <FaShoppingCart className="mr-2" />
                   ADD TO CART
+                  {productInCartCount > 0 && (
+                    <div className="absolute -top-2 -right-2 bg-black text-white text-xs w-6 h-6 flex items-center justify-center rounded-full">
+                      {productInCartCount}
+                    </div>
+                  )}
                 </button>
                 <div className="flex-1">
                   <ProductWishlistButton
                     productId={productData.documentId}
-                    className="w-full border border-gray-300 hover:border-gray-400 py-3 px-6 rounded-md font-medium flex items-center justify-center transition-all"
+                    className="w-full btn btn-soft border border-gray-300 hover:border-gray-400   transition-all"
                   />
                 </div>
               </div>
@@ -409,7 +410,6 @@ export default function DetailsPage() {
                 </div>
               </div>
             </div>
-            
           </div>
 
           {/* Description & Review Tabs */}
@@ -467,15 +467,13 @@ export default function DetailsPage() {
                 </div>
               )}
             </div>
-
-
           </div>
 
           {/* Related Products Section */}
-            <RelatedProduct
-              category={productData.category?.documentId}
-              sub_category={productData.sub_category?.documentId}
-            />
+          <RelatedProduct
+            category={productData.category?.documentId}
+            sub_category={productData.sub_category?.documentId}
+          />
         </div>
       )}
     </div>

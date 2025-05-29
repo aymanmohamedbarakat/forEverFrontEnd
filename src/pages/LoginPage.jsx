@@ -290,7 +290,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => navigate("/register")}
-                    className="font-medium text-gray-700 hover:text-black ml-1"
+                    className="font-bold text-gray-700 hover:text-black ml-1"
                   >
                     Create Account
                   </button>
